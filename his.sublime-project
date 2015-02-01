@@ -1,0 +1,27 @@
+{
+	"build_systems":
+	[
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "/Users/patrick/Documents/Health/bin/python -u \"$file\""
+		}
+	],
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				".svn",
+				"__pycache__"
+			],
+			"follow_symlinks": true,
+			"path": "/Users/patrick/Documents/Health/his"
+		}
+	],
+	"settings":
+	{
+		"python_interpreter": "/Users/patrick/Documents/Health/bin/python"
+	}
+}
