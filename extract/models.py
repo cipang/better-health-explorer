@@ -22,11 +22,25 @@ class Article(models.Model):
 class Image(models.Model):
     article = models.ForeignKey(Article)
     src = models.URLField()
-    alt = models.CharField(max_length=50)
+    alt = models.CharField(max_length=200)
 
     class Meta:
         verbose_name = "Image"
         verbose_name_plural = "Images"
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class OutLink(models.Model):
+    article = models.ForeignKey(Article)
+    target_source = models.CharField(max_length=5)
+    target_url = models.URLField()
+    alt = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = "OutLink"
+        verbose_name_plural = "OutLinks"
 
     def __str__(self):
         return str(self.pk)

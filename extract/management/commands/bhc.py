@@ -1,15 +1,29 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
-from extract.models import Article, Image
+from django.db.transaction import atomic
+from extract.models import *
 from bs4 import BeautifulSoup
+import os
+import re
 
 
 class Command(BaseCommand):
     args = "filename"
     help = "Extract information from BHC articles"
+    re_link = re.compile(r"\A[a-z]+\://")
 
     def handle(self, *args, **options):
-        filename = args[0]
+        for filename in args:
+            try:
+                basename = os.path.basename(filename)
+                result = self.do_file(filename)
+                self.stdout.write("{0}: {1} images; {2} links.".format(
+                    basename, result[0], result[1]))
+            except Exception as e:
+                raise CommandError("{0}: {1}".format(basename, e))
+
+    @atomic
+    def do_file(self, filename):
         soup = BeautifulSoup(open(filename, "r", encoding="cp1252"))
         article = Article()
         article.source = "BHC"
@@ -40,7 +54,18 @@ class Command(BaseCommand):
             image.save()
             img_count += 1
 
-        output_msg = "Done: {0}".format(article)
-        if img_count:
-            output_msg += " (with {0} images)".format(img_count)
-        self.stdout.write(output_msg)
+        # Handle hyperlinks.
+        link_count = 0
+        all_links = soup.body.find_all("a", href=True)
+        for link in all_links:
+            ol = OutLink(article=article)
+            ol.target_url = link["href"]
+            if self.re_link.match(ol.target_url):
+                ol.target_source = "WWW"
+            else:
+                ol.target_source = article.source
+            ol.alt = str(link.string)[0:200]
+            ol.save()
+            link_count += 1
+
+        return (img_count, link_count)
