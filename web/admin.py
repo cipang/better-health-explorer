@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import ArticleAttr
 
-# Register your models here.
+
+@admin.register(ArticleAttr)
+class DefaultAdmin(admin.ModelAdmin):
+    pass
