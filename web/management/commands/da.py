@@ -41,7 +41,7 @@ class Command(BaseCommand):
             aa.length = self.normalize(stats.word_count, Stats.max_word_count)
             aa.media = self.normalize(stats.image_count, Stats.max_image_count)
             aa.is_local = article.source in ("BHC")
-            print(aa)
+            aa.save()
 
     def compute_stats(self):
         d = dict()

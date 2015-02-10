@@ -3,7 +3,7 @@ from extract.models import Article
 
 
 class ArticleAttr(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.OneToOneField(Article)
     similarity = models.SmallIntegerField(default=0)
     length = models.SmallIntegerField(default=0)
     media = models.SmallIntegerField(default=0)
