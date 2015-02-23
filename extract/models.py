@@ -3,13 +3,13 @@ from django.db import models
 
 class Article(models.Model):
     source = models.CharField(max_length=5)
-    url = models.URLField(null=True, default=None)
+    url = models.URLField(null=True, default=None, blank=True)
     title = models.CharField(max_length=200)
     summary = models.TextField()
     content = models.TextField()
     category = models.CharField(max_length=200)
-    remarks = models.CharField(max_length=150, null=True)
-    last_modified = models.DateTimeField(null=True)
+    remarks = models.CharField(max_length=150, null=True, blank=True)
+    last_modified = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Article"

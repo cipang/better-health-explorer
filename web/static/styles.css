@@ -1,0 +1,13 @@
+#main {
+    padding: 10px;
+    margin-right: 250px;
+    color: #868a08;
+}
+
+#panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 250px;
+    padding: 10px;
+}
