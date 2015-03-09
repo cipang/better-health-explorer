@@ -8,4 +8,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'web.views.home', name='home'),
+    url(r'^content/$', 'web.views.content'),
 )

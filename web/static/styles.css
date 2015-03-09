@@ -1,6 +1,6 @@
 #main {
     padding: 10px;
-    margin-right: 250px;
+    margin-right: 400px;
     color: #868a08;
 }
 
@@ -8,6 +8,40 @@
     position: fixed;
     right: 0;
     top: 0;
-    width: 250px;
+    width: 400px;
     padding: 10px;
+    background-color: #eee;
+}
+
+#panel h1 { font-size: 18px; margin: 15px 0; }
+
+#pagetitle { display: none; }
+
+#pond {
+    position: relative;
+    width: 380px;
+    height: 400px;
+    background-color: #e6e6fa;
+}
+
+#pond .fish {
+    position: absolute;
+    border-radius: 20px;
+    text-align: center;
+    padding: 5px;
+    background-color: #fff;
+    font-size: 12px;
+    width: 120px;
+    height: 50px;
+    border: 2px solid #000000;
+    transition-duration: 1s;
+    top: 0;
+    left: 0;
+}
+
+#pond #current {
+    border: 2px solid #8b0000;
+    background-color: #f08080;
+    top: 160px;
+    left: 130px;
 }
