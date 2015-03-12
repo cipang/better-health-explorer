@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+    {% load staticfiles %}
+    <script src="{% static 'jquery-1.11.2.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap.css' %}">
+    <script src="{% static 'bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="{% static 'article.js' %}"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    {% load staticfiles %}
-    <link rel="stylesheet" href="{% static "styles.css" %}">
-    <script src="{% static "article.js" %}"></script>
 </head>
 <body>
     <div id="main">
@@ -27,12 +27,21 @@
         <h1>Explore this topic...</h1>
         <div id="pond">
             <div class="fish" id="current">CENTER</div>
-            <div class="fish" style="transform: translate(25px, 10px);">Something 1</div>
-            <div class="fish" style="transform: translate(75px, 100px);">Something 2</div>
-            <div class="fish" style="transform: translate(250px, 10px);">Something 3</div>
         </div>
         <div id="sliders">
-            1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+            <div id="slider1" class="slider">
+                S1:
+                {% for n in slider %}
+                <a href="#" onclick="changeSlider(0, {{ n }}); return false;">{{ n }}</a>
+                {% endfor %}
+            </div>
+
+            <div id="slider2" class="slider">
+                S2:
+                {% for n in slider %}
+                <a href="#" onclick="changeSlider(1, {{ n }}); return false;">{{ n }}</a>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </body>
