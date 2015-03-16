@@ -47,14 +47,8 @@
     cursor: default;
 }
 
-.slider {
-    padding: 0.5em 0;
-}
+#sliders { margin-top: 1em; }
 
-.slider a {
-    display: inline-block;
-    padding: 0.25em;
-    border: 1px solid #ccc;
-    background-color: white;
-    font-size: 12px;
+.slider {
+    margin: 5px 10px;
 }

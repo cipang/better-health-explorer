@@ -36,21 +36,24 @@ def catch_fish(request):
 
     # TODO: For demo only.
     start = 1 if int(article_id) == 93 else randint(0, 100)
+    angle_stack = [0, 60, 120, 180, 240, 300]
 
     sim_records = ArticleAttr.objects.order_by("-similarity").\
         select_related("article")[start:start + 5]
-    result = []
+    result = dict()
     for r in sim_records:
         sim = r.similarity
         # Compute length with similarity
         l = max((SLIDER_MAX - r.similarity) / SLIDER_MAX * CENTER.y,
                 CENTER_DISTANCE_MIN)
-        angle = math.radians(randint(0, 360))   # Random an angle.
-        dx = l * math.cos(angle)    # Compute x and y offsets.
-        dy = l * math.sin(angle)
-        result.append({"id": r.article.id,
-                       "title": r.article.title,
-                       "similarity": sim,
-                       "dx": dx,
-                       "dy": dy})
+        angle = angle_stack.pop(0)
+        dx = int(l * math.cos(angle))    # Compute x and y offsets.
+        dy = int(l * math.sin(angle))
+        dx += int(sliders[0]) * 5
+        dy += int(sliders[1]) * 5
+        result["fish" + str(r.article.id)] = ({"id": r.article.id,
+                                               "title": r.article.title,
+                                               "similarity": sim,
+                                               "dx": dx,
+                                               "dy": dy})
     return JsonResponse({"result": result})

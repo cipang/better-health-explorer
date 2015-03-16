@@ -8,6 +8,8 @@
     <script src="{% static 'jquery-1.11.2.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'bootstrap.css' %}">
     <script src="{% static 'bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'jquery-ui.min.css' %}">
+    <script src="{% static 'jquery-ui.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script src="{% static 'article.js' %}"></script>
 
@@ -29,18 +31,20 @@
             <div class="fish" id="current">CENTER</div>
         </div>
         <div id="sliders">
-            <div id="slider1" class="slider">
-                S1:
-                {% for n in slider %}
-                <a href="#" onclick="changeSlider(0, {{ n }}); return false;">{{ n }}</a>
-                {% endfor %}
+            <div class="dimension">
+                <span class="pull-left">Short</span>
+                <span class="pull-right">Long
+                    <em class="small"> (<span class="slidervalue">10</span>)</em></span>
+                <br class="clearfix">
+                <div class="slider" data-dim="0"></div>
             </div>
 
-            <div id="slider2" class="slider">
-                S2:
-                {% for n in slider %}
-                <a href="#" onclick="changeSlider(1, {{ n }}); return false;">{{ n }}</a>
-                {% endfor %}
+            <div class="dimension">
+                <span class="pull-left">Text</span>
+                <span class="pull-right">Image
+                    <em class="small"> (<span class="slidervalue">10</span>)</em></span>
+                <br class="clearfix">
+                <div class="slider" data-dim="1"></div>
             </div>
         </div>
     </div>
