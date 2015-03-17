@@ -4,7 +4,7 @@ from extract.models import Article
 from web.models import ArticleAttr
 from random import randint
 from collections import namedtuple
-import math
+import math, operator, sys
 
 
 Point = namedtuple("Point", ["x", "y"])
@@ -29,31 +29,41 @@ def content(request):
         raise Http404("No such article: {0}.".format(article_id))
 
 
+def article_match_with_silders(sliders):
+    a = sliders
+    for attr in ArticleAttr.objects.select_related("article"):
+        b = (attr.length, attr.media)
+        dot_product = sum(map(operator.mul, a, b))
+        yield (attr, dot_product)
+
+
 def catch_fish(request):
     article_id = request.GET.get("article")
-    sliders = request.GET.getlist("sliders[]")
+    sliders = list(map(int, request.GET.getlist("sliders[]")))
     assert len(sliders)
 
-    # TODO: For demo only.
-    start = 1 if int(article_id) == 93 else randint(0, 100)
-    angle_stack = [0, 60, 120, 180, 240, 300]
+    angles = (a for a in range(0, sys.maxsize, 60))
+    all_results = sorted(article_match_with_silders(sliders),
+                         key=lambda x: x[1],
+                         reverse=True)
 
-    sim_records = ArticleAttr.objects.order_by("-similarity").\
-        select_related("article")[start:start + 5]
     result = dict()
-    for r in sim_records:
-        sim = r.similarity
+    for r in all_results[0:10]:
+        attr, score = r
+        sim = attr.similarity
         # Compute length with similarity
-        l = max((SLIDER_MAX - r.similarity) / SLIDER_MAX * CENTER.y,
+        l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y,
                 CENTER_DISTANCE_MIN)
-        angle = angle_stack.pop(0)
+        angle = next(angles)
         dx = int(l * math.cos(angle))    # Compute x and y offsets.
         dy = int(l * math.sin(angle))
-        dx += int(sliders[0]) * 5
-        dy += int(sliders[1]) * 5
-        result["fish" + str(r.article.id)] = ({"id": r.article.id,
-                                               "title": r.article.title,
-                                               "similarity": sim,
-                                               "dx": dx,
-                                               "dy": dy})
+        # dx += int(sliders[0]) * 5
+        # dy += int(sliders[1]) * 5
+        fish_str_id = "fish{0}".format(attr.article.id)
+        result[fish_str_id] = ({"id": attr.article.id,
+                                "title": attr.article.title,
+                                "score": score,
+                                "similarity": sim,
+                                "dx": dx,
+                                "dy": dy})
     return JsonResponse({"result": result})
