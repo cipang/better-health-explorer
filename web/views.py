@@ -29,9 +29,11 @@ def content(request):
         raise Http404("No such article: {0}.".format(article_id))
 
 
-def article_match_with_silders(sliders):
+def article_match_with_silders(current, sliders):
     a = sliders
-    for attr in ArticleAttr.objects.select_related("article"):
+    qs = ArticleAttr.objects.select_related("article").\
+        exclude(article__id=current)
+    for attr in qs:
         b = (attr.length, attr.media)
         dot_product = sum(map(operator.mul, a, b))
         yield (attr, dot_product)
@@ -43,7 +45,7 @@ def catch_fish(request):
     assert len(sliders)
 
     angles = (a for a in range(0, sys.maxsize, 60))
-    all_results = sorted(article_match_with_silders(sliders),
+    all_results = sorted(article_match_with_silders(article_id, sliders),
                          key=lambda x: x[1],
                          reverse=True)
 
