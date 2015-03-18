@@ -4,7 +4,6 @@ from extract.models import Article
 
 class ArticleAttr(models.Model):
     article = models.OneToOneField(Article)
-    similarity = models.SmallIntegerField(default=0)
     length = models.SmallIntegerField(default=0)
     media = models.SmallIntegerField(default=0)
     is_video = models.BooleanField(default=False)
@@ -20,3 +19,14 @@ class ArticleAttr(models.Model):
             self.similarity,
             self.length,
             self.media)
+
+
+class ArticleSimilarity(models.Model):
+    a = models.IntegerField("Article A (with smaller ID)")
+    b = models.IntegerField("Article B (with bigger ID)")
+    similarity = models.SmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "ArticleSimilarity"
+        verbose_name_plural = "ArticleSimilarity"
+        unique_together = [("a", "b")]

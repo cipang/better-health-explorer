@@ -1,5 +1,5 @@
 var initArticle = 93, currentArticle, pond = new Object();
-var sliderValues = [10, 10];
+var sliderValues = [10, 10, 10];
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
