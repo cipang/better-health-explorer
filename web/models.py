@@ -14,9 +14,8 @@ class ArticleAttr(models.Model):
         verbose_name_plural = "ArticleAttrs"
 
     def __str__(self):
-        return "{0} {1} {2} {3}".format(
+        return "{0} {1} {2}".format(
             self.article if self.article_id else None,
-            self.similarity,
             self.length,
             self.media)
 
@@ -30,3 +29,6 @@ class ArticleSimilarity(models.Model):
         verbose_name = "ArticleSimilarity"
         verbose_name_plural = "ArticleSimilarity"
         unique_together = [("a", "b")]
+
+    def __str__(self):
+        return "{0} {1} {2}".format(self.a, self.b, self.similarity)

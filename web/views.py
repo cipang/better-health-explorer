@@ -31,6 +31,21 @@ def content(request):
         raise Http404("No such article: {0}.".format(article_id))
 
 
+def _cosine_similarity(v1, v2):
+    sumxx, sumxy, sumyy = 0, 0, 0
+    for i in range(len(v1)):
+        x = v1[i]
+        y = v2[i]
+        sumxx += x * x
+        sumyy += y * y
+        sumxy += x * y
+    return sumxy / math.sqrt(sumxx * sumyy)
+
+
+def _dot_product(v1, v2):
+    return sum(map(operator.mul, v1, v2))
+
+
 def article_match_with_silders(current, sliders):
     a = sliders
     qs = ArticleAttr.objects.select_related("article").\
@@ -38,8 +53,9 @@ def article_match_with_silders(current, sliders):
     for attr in qs:
         sim = _get_sim(current, attr.article.id)
         b = (attr.length, attr.media, sim)
-        dot_product = sum(map(operator.mul, a, b))
-        yield (attr, dot_product, sim)
+        score = _cosine_similarity(a, b)
+        # score = _dot_product(a, b)
+        yield (attr, score, sim)
 
 
 def _get_sim(a, b):
@@ -65,13 +81,17 @@ def catch_fish(request):
     all_results = sorted(article_match_with_silders(article_id, sliders),
                          key=lambda x: x[1],
                          reverse=True)
+    all_results = sorted(all_results[0:10], key=lambda x: x[0].article.title)
 
     result = dict()
-    for r in all_results[0:10]:
+    for r in all_results:
         attr, score, sim = r
         # Compute length with similarity
-        l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1.5,
-                CENTER_DISTANCE_MIN)
+        # l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1,
+        #         CENTER_DISTANCE_MIN)
+
+        # Compute length with slider matching.
+        l = score * CENTER.y * 0.75
         angle = next(angles)
         dx = int(l * math.cos(angle))    # Compute x and y offsets.
         dy = int(l * math.sin(angle))

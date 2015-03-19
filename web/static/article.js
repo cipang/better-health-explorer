@@ -29,6 +29,8 @@ function catchFish(article) {
                     div.attr("id", id).data("article", fish.id);
                     div.attr("title", fish.title).text(fish.title);
                     div.click(fishClicked);
+                    div.css("width", Math.max(120, fish.similarity / 20 * 180) + "px");
+                    div.css("height", Math.max(50, fish.similarity / 20 * 80) + "px");
                     div.appendTo("#pond");
                 }
                 transform(id, fish.dx, fish.dy);
