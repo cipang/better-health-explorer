@@ -1,5 +1,5 @@
 var initArticle = 93, currentArticle, pond = new Object();
-var sliderValues = [10, 10, 10];
+var sliderValues = [10, 10, 10, 10];
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
@@ -14,7 +14,8 @@ function transform(id, dx, dy) {
 }
 
 function remove(id) {
-    setTimeout("$('#" + id + "').css('transform', 'translate(300px,300px)')", 100);
+    // setTimeout("$('#" + id + "').css('transform', 'translate(300px,300px)')", 100);
+    setTimeout("$('#" + id + "').css('opacity', '0.3')", 100);
     setTimeout("$('#" + id + "').remove()", 400);
 }
 
@@ -29,8 +30,8 @@ function catchFish(article) {
                     div.attr("id", id).data("article", fish.id);
                     div.attr("title", fish.title).text(fish.title);
                     div.click(fishClicked);
-                    div.css("width", Math.max(120, fish.similarity / 20 * 180) + "px");
-                    div.css("height", Math.max(50, fish.similarity / 20 * 80) + "px");
+                    // div.css("width", Math.max(120, fish.similarity / 20 * 180) + "px");
+                    // div.css("height", Math.max(50, fish.similarity / 20 * 80) + "px");
                     div.appendTo("#pond");
                 }
                 transform(id, fish.dx, fish.dy);

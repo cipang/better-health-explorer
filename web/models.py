@@ -6,6 +6,8 @@ class ArticleAttr(models.Model):
     article = models.OneToOneField(Article)
     length = models.SmallIntegerField(default=0)
     media = models.SmallIntegerField(default=0)
+    care = models.SmallIntegerField(default=0)
+    reading = models.SmallIntegerField(default=0)
     is_video = models.BooleanField(default=False)
     is_local = models.BooleanField(default=False)
 

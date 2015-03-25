@@ -4,7 +4,7 @@ from .models import *
 
 @admin.register(ArticleAttr)
 class DefaultAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["article", "length", "media", "care", "reading"]
 
 
 @admin.register(ArticleSimilarity)

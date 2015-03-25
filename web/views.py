@@ -52,7 +52,7 @@ def article_match_with_silders(current, sliders):
         exclude(article__id=current)
     for attr in qs:
         sim = _get_sim(current, attr.article.id)
-        b = (attr.length, attr.media, sim)
+        b = (attr.length, attr.media, sim, attr.care)
         score = _cosine_similarity(a, b)
         # score = _dot_product(a, b)
         yield (attr, score, sim)
@@ -87,16 +87,16 @@ def catch_fish(request):
     for r in all_results:
         attr, score, sim = r
         # Compute length with similarity
-        # l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1,
-        #         CENTER_DISTANCE_MIN)
+        l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1,
+                CENTER_DISTANCE_MIN)
 
         # Compute length with slider matching.
-        l = score * CENTER.y * 0.75
+        # l = score * CENTER.y * 0.75
         angle = next(angles)
         dx = int(l * math.cos(angle))    # Compute x and y offsets.
         dy = int(l * math.sin(angle))
-        # dx += int(sliders[0]) * 5
-        # dy += int(sliders[1]) * 5
+        dx += randint(0, 5)
+        dy += randint(0, 5)
         fish_str_id = "fish{0}".format(attr.article.id)
         result[fish_str_id] = ({"id": attr.article.id,
                                 "title": attr.article.title,

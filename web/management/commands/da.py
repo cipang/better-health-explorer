@@ -4,7 +4,10 @@ from web.models import *
 from bs4 import BeautifulSoup
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
-import math, os
+from random import randint
+import math
+import os
+import re
 
 
 class Stats:
@@ -57,6 +60,7 @@ class Command(BaseCommand):
                 aa = ArticleAttr(article=article)
             aa.length = self.normalize(stats.word_count, Stats.max_word_count)
             aa.media = self.normalize(stats.image_count, Stats.max_image_count)
+            aa.care = stats.care
             aa.is_local = article.source in ("BHC")
             aa.save()
 
@@ -74,6 +78,11 @@ class Command(BaseCommand):
             row.save()
 
     def compute_stats(self):
+        re_care = re.compile(r"\b(care|caring|manage|managing|management|family)\b",
+                             flags=re.IGNORECASE)
+        re_cond = re.compile(r"\b(condition[s]?|treatment[s]?)\b",
+                             flags=re.IGNORECASE)
+
         d = dict()
         qs = Article.objects.all().prefetch_related("image_set")
         for article in qs:
@@ -86,6 +95,16 @@ class Command(BaseCommand):
             # Compute length.
             content = self.get_article_text(article)
             stats.word_count = len(content.split(" "))
+
+            # Compute article nature: caring <-> conditions
+            t, c = article.title, article.category
+            if re_care.search(t) or re_care.search(c):
+                stats.care = randint(1, 7)
+            elif re_cond.search(t) or re_cond.search(c):
+                stats.care = randint(13, 20)
+            else:
+                stats.care = randint(8, 12)
+
         return d
 
     def compute_similarity(self):
