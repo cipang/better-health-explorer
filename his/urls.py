@@ -10,4 +10,5 @@ urlpatterns = patterns('',
     url(r'^$', 'web.views.home', name='home'),
     url(r'^content$', 'web.views.content'),
     url(r'^catchfish$', 'web.views.catch_fish'),
+    url(r'^ortest$', 'web.views.overlap_removal_test'),
 )

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Overlap Removal Test</title>
+    <style type="text/css">
+    .parent { position: relative; height: 450px; }
+    .parent div { position: absolute; background-color: #ccc; color: white;
+        border: 1px solid #000; box-sizing: border-box; }
+    #n div { background-color: #ff1493; }
+    body { font-family: sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="parent" id="o">
+    Original
+    {% for r in rects %}
+        <div style="width: {{ r.width }}px; height: {{ r.height }}px; left: {{ r.x }}px; top: {{ r.y }}px">
+        {{ r.name }}
+        </div>
+    {% endfor %}
+    </div>
+
+    <div class="parent" id="n">
+    New
+    {% for r in nr %}
+        <div style="width: {{ r.width }}px; height: {{ r.height }}px; left: {{ r.x }}px; top: {{ r.y }}px">
+        {{ r.name }}
+        </div>
+    {% endfor %}
+    </div>
+</body>
+</html>

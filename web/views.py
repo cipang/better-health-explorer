@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import Http404, JsonResponse
 from extract.models import Article
 from web.models import *
+from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
 from collections import namedtuple
 import math, operator, sys
@@ -13,6 +14,14 @@ SLIDER_MAX = 20
 CENTER_DISTANCE_MIN = 100
 
 ALL_SIM = None
+
+
+class FishRect(Rectangle):
+    """Displayed rectangle of each fish. For overlap removal."""
+
+    def __init__(self, x, y, width, height, fish_id):
+        super(FishRect, self).__init__(x, y, width, height)
+        self.fish_id = fish_id
 
 
 def home(request):
@@ -87,11 +96,11 @@ def catch_fish(request):
     for r in all_results:
         attr, score, sim = r
         # Compute length with similarity
-        l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1,
-                CENTER_DISTANCE_MIN)
+        # l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1,
+        #         CENTER_DISTANCE_MIN)
 
         # Compute length with slider matching.
-        # l = score * CENTER.y * 0.75
+        l = score * CENTER.y * 0.75
         angle = next(angles)
         dx = int(l * math.cos(angle))    # Compute x and y offsets.
         dy = int(l * math.sin(angle))
@@ -104,4 +113,60 @@ def catch_fish(request):
                                 "similarity": sim,
                                 "dx": dx,
                                 "dy": dy})
+
+    # Do overlap removal.
+    # or_list = [FishRect(f["dx"], f["dy"], 120, 50, k) for k, f in result.items()]
+    # remove_overlap(or_list)
+    # for r in or_list:
+    #     result[r.fish_id]["dx"] = r.x
+    #     result[r.fish_id]["dy"] = r.y
+
     return JsonResponse({"result": result})
+
+
+def overlap_removal_test(request):
+    class TestRect(Rectangle):
+        name = None
+
+    rects = list()
+    # rects.append(TestRect(250, 250, 6, 6))
+    # rects.append(TestRect(248, 249, 5, 5))
+    # rects.append(TestRect(291, 208, 5, 5))
+    # rects.append(TestRect(163, 278, 5, 5))
+    # rects.append(TestRect(259, 268, 5, 5))
+    # rects.append(TestRect(323, 215, 67, 67))
+    # rects.append(TestRect(226, 238, 5, 5))
+    # rects.append(TestRect(331, 321, 5, 5))
+    # rects.append(TestRect(263, 253, 5, 5))
+    # rects.append(TestRect(298, 193, 5, 5))
+    # rects.append(TestRect(244, 238, 5, 5))
+    # rects.append(TestRect(233, 272, 5, 5))
+    # rects.append(TestRect(259, 227, 5, 5))
+    # rects.append(TestRect(219, 250, 5, 5))
+    # rects.append(TestRect(294, 319, 5, 5))
+    # rects.append(TestRect(249, 225, 5, 5))
+    # rects.append(TestRect(170, 180, 5, 5))
+    # rects.append(TestRect(271, 244, 5, 5))
+    # rects.append(TestRect(163, 330, 5, 5))
+    # rects.append(TestRect(250, 280, 5, 5))
+    # rects.append(TestRect(237, 247, 5, 5))
+    # rects.append(TestRect(240, 263, 5, 5))
+    # rects.append(TestRect(229, 255, 5, 5))
+    # rects.append(TestRect(255, 238, 5, 5))
+    # rects.append(TestRect(234, 224, 5, 5))
+    # rects.append(TestRect(331, 236, 5, 5))
+    # rects.append(TestRect(249, 268, 5, 5))
+    # rects.append(TestRect(211, 195, 76, 76))
+    # rects.append(TestRect(270, 265, 5, 5))
+    for i in range(0, 8):
+        x = randint(0, 200) + 200
+        y = randint(0, 100) + 100
+        w = randint(0, 50) + 50
+        h = randint(0, 50) + 50
+        r = TestRect(x, y, w, h)
+        r.name = str(i)
+        rects.append(r)
+    import copy
+    new_rects = copy.deepcopy(rects)
+    remove_overlap(new_rects)
+    return render(request, "ortest.html", {"rects": rects, "nr": new_rects})
