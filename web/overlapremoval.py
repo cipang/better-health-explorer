@@ -5,15 +5,15 @@ DIR_LEFT = 1
 DIR_UP = 2
 DIR_DOWN = 3
 
-# Private gap variables.
-_xgap = 0
-_ygap = 0
-
 
 class Rectangle(object):
-    """docstring for Rectangle"""
-    __hash__ = object.__hash__
+    """Define a rectangle which is used for overlap removal.
 
+    This class stores the coordinate of the left-top corner and the size of a
+    rectangle. This information is used to calculate new position after running
+    an overlap removal process. One may inherit this class to store additional
+    values/identifiers along with a rectangle.
+    """
     def __init__(self, x=0, y=0, width=0, height=0):
         self.x = x
         self.y = y
@@ -34,14 +34,24 @@ class Rectangle(object):
                 self.y == other.y and \
                 self.width == other.width and \
                 self.height == other.height
-        except NameError:
+        except Exception:
             return False
+
+    def __hash__(self):
+        return hash(repr(self))
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
 
 def remove_overlap(rectangles):
+    """Change the positions of rectangles so that rectangles do not overlap.
+
+    Note: The new positions overwrites the current x, y values of rectangles.
+    Make a copy if you want to preserve the original coordinates.
+
+    :param rectangles: A list of rectangles.
+    """
     _right_horizontal_scan(rectangles)
     _left_horizontal_scan(rectangles)
     _up_horizontal_scan(rectangles)
@@ -121,7 +131,7 @@ def _right_horizontal_scan(rectangles):
                     f = delta
             if f != 0:
                 for e in rtns:
-                    e.x += f + _xgap
+                    e.x += f
 
 
 def _left_horizontal_scan(rectangles):
@@ -139,7 +149,7 @@ def _left_horizontal_scan(rectangles):
                     f = delta
             if f != 0:
                 for e in ltns:
-                    e.x -= f - _xgap
+                    e.x -= f
 
 
 def _up_horizontal_scan(rectangles):
@@ -157,7 +167,7 @@ def _up_horizontal_scan(rectangles):
                     f = delta
             if f != 0:
                 for e in utns:
-                    e.y -= f - _ygap
+                    e.y -= f
 
 
 def _down_horizontal_scan(rectangles):
@@ -175,4 +185,4 @@ def _down_horizontal_scan(rectangles):
                     f = delta
             if f != 0:
                 for e in dtns:
-                    e.y += f + _ygap
+                    e.y += f

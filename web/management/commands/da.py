@@ -33,6 +33,10 @@ class Stats:
 class Command(BaseCommand):
     args = ""
     help = "Run data analysis"
+    option_list = BaseCommand.option_list + (
+        make_option("--sim", action="store_true", dest="sim",
+                    default=False, help="Run similarity computation."),
+    )
 
     @staticmethod
     def normalize(x, max_x, max_output=20, cast=math.ceil):
@@ -64,18 +68,19 @@ class Command(BaseCommand):
             aa.is_local = article.source in ("BHC")
             aa.save()
 
-        self.stdout.write("Computing similarity values...")
-        result = self.compute_similarity()
-        for a, b, stats in result:
-            try:
-                row = ArticleSimilarity.objects.get(a=a, b=b)
-            except ArticleSimilarity.DoesNotExist:
-                row = ArticleSimilarity(a=a, b=b)
-            row.similarity = self.normalize(stats.co_word_count,
-                                            Stats.max_co_word_count)
-            if stats.linked_flag:
-                row.similarity = self.normalize(row.similarity + 10, 20)
-            row.save()
+        if options["sim"]:
+            self.stdout.write("Computing similarity values...")
+            result = self.compute_similarity()
+            for a, b, stats in result:
+                try:
+                    row = ArticleSimilarity.objects.get(a=a, b=b)
+                except ArticleSimilarity.DoesNotExist:
+                    row = ArticleSimilarity(a=a, b=b)
+                row.similarity = self.normalize(stats.co_word_count,
+                                                Stats.max_co_word_count)
+                if stats.linked_flag:
+                    row.similarity = self.normalize(row.similarity + 10, 20)
+                row.save()
 
     def compute_stats(self):
         re_care = re.compile(r"\b(care|caring|manage|managing|management|family)\b",

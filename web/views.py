@@ -5,7 +5,8 @@ from web.models import *
 from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
 from collections import namedtuple
-import math, operator, sys
+import math
+import sys
 
 
 Point = namedtuple("Point", ["x", "y"])
@@ -18,7 +19,6 @@ ALL_SIM = None
 
 class FishRect(Rectangle):
     """Displayed rectangle of each fish. For overlap removal."""
-
     def __init__(self, x, y, width, height, fish_id):
         super(FishRect, self).__init__(x, y, width, height)
         self.fish_id = fish_id
@@ -132,7 +132,7 @@ def overlap_removal_test(request):
     # rects.append(TestRect(250, 250, 6, 6))
     # rects.append(TestRect(248, 249, 5, 5))
     # rects.append(TestRect(291, 208, 5, 5))
-    # rects.append(TestRect(163, 278, 5, 5))
+    # rects.a‰ppend(TestRect(163, 278, 5, 5))
     # rects.append(TestRect(259, 268, 5, 5))
     # rects.append(TestRect(323, 215, 67, 67))
     # rects.append(TestRect(226, 238, 5, 5))
@@ -158,7 +158,7 @@ def overlap_removal_test(request):
     # rects.append(TestRect(249, 268, 5, 5))
     # rects.append(TestRect(211, 195, 76, 76))
     # rects.append(TestRect(270, 265, 5, 5))
-    for i in range(0, 8):
+    for i in range(0, 50):
         x = randint(0, 200) + 200
         y = randint(0, 100) + 100
         w = randint(0, 50) + 50

@@ -34,3 +34,17 @@ class ArticleSimilarity(models.Model):
 
     def __str__(self):
         return "{0} {1} {2}".format(self.a, self.b, self.similarity)
+
+
+class Section(models.Model):
+    article = models.ForeignKey(Article)
+    section_no = models.IntegerField("Section No.")
+    title = models.CharField("Section Title", max_length=150)
+    content = models.TextField("Section Content")
+
+    class Meta:
+        verbose_name = "Section"
+        verbose_name_plural = "Sections"
+
+    def __str__(self):
+        return "{0} {1}".format(self.article_id, self.section_no)
