@@ -45,6 +45,7 @@ class Section(models.Model):
     class Meta:
         verbose_name = "Section"
         verbose_name_plural = "Sections"
+        ordering = ["article", "section_no"]
 
     def __str__(self):
         return "{0} {1}".format(self.article_id, self.section_no)

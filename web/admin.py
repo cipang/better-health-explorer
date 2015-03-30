@@ -15,3 +15,4 @@ class SimilarityAdmin(admin.ModelAdmin):
 @admin.register(Section)
 class SectionAdmin(admin.ModelAdmin):
     list_display = ["article", "section_no", "title"]
+    search_fields = ["article__title"]
