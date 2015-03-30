@@ -1,10 +1,11 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError, make_option
 from extract.models import *
 from web.models import *
 from bs4 import BeautifulSoup
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from random import randint
+from . import readability
 import math
 import os
 import re
@@ -14,11 +15,13 @@ class Stats:
     max_image_count = 0
     max_word_count = 0
     max_co_word_count = 0
+    max_reading = 0
 
     def __init__(self):
         self.image_count = 0
         self.word_count = 0
         self.co_word = 0
+        self.reading = 0
 
     def __setattr__(self, name, value):
         if name == "image_count" and value > Stats.max_image_count:
@@ -27,6 +30,8 @@ class Stats:
             Stats.max_word_count = value
         elif name == "co_word_count" and value > Stats.max_co_word_count:
             Stats.max_co_word_count = value
+        elif name == "reading" and value > Stats.max_reading:
+            Stats.max_reading = value
         object.__setattr__(self, name, value)
 
 
@@ -40,6 +45,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def normalize(x, max_x, max_output=20, cast=math.ceil):
+        if max_x == 0:
+            return 0
         result = cast((float(x) / float(max_x)) * max_output)
         return max(min(max_output, result), 0)
 
@@ -65,6 +72,7 @@ class Command(BaseCommand):
             aa.length = self.normalize(stats.word_count, Stats.max_word_count)
             aa.media = self.normalize(stats.image_count, Stats.max_image_count)
             aa.care = stats.care
+            aa.reading = self.normalize(stats.reading, Stats.max_reading)
             aa.is_local = article.source in ("BHC")
             aa.save()
 
@@ -100,6 +108,9 @@ class Command(BaseCommand):
             # Compute length.
             content = self.get_article_text(article)
             stats.word_count = len(content.split(" "))
+
+            # Compute reading level.
+            stats.reading = readability.grade_level(content)
 
             # Compute article nature: caring <-> conditions
             t, c = article.title, article.category
