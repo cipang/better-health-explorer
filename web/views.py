@@ -34,7 +34,10 @@ def content(request):
     article_id = request.GET.get("article")
     try:
         a = Article.objects.get(id=article_id)
-        d = {"title": a.title, "content": a.content}
+        sections = [{"title": s.title, "content": s.content}
+                    for s in a.section_set.all()]
+        d = {"title": a.title, "content": "", "summary": a.summary,
+             "sections": sections}
         return JsonResponse(d)
     except Article.DoesNotExist:
         raise Http404("No such article: {0}.".format(article_id))

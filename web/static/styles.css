@@ -15,8 +15,6 @@
 
 #panel h1 { font-size: 18px; margin: 15px 0; }
 
-#pagetitle { display: none; }
-
 #pond {
     position: relative;
     width: 380px;
@@ -52,3 +50,31 @@
 .slider {
     margin: 5px 10px;
 }
+
+#summary {
+    background-color: #eee;
+    padding: 1em;
+    border-radius: 5px;
+    margin-bottom: 1em;
+}
+
+#toc {
+    font-size: 12px;
+    color: #aaa;
+    margin: 2em 0;
+}
+
+#toc:before {
+    content: "Table of Content";
+    font-weight: bold;
+}
+
+.sheader {
+    transition-duration: 1s;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+.scontent br:last-child, .scontent br:first-child { display: none; }

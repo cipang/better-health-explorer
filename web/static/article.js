@@ -3,9 +3,30 @@ var sliderValues = [10, 10, 10, 10];
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
-        $("#acontent").html(data.content);
-        $("#current").html(data.title);
+        //$("#acontent").html(data.content);
+        $("#current, #pagetitle").html(data.title);
+        $("#acontent").empty();
+        $("<div>").attr("id", "summary").html(data.summary).appendTo("#acontent");
+        var toc = $("<ol>").attr("id", "toc");
+        for (var i = 0; i < data.sections.length; i++) {
+            var section = data.sections[i];
+            var li = $("<li>").appendTo(toc);
+            $("<a>").text(section.title).attr("href", "#").data("section", i).addClass("slink").appendTo(li);
+            $("<h2>").attr("id", "s" + i).text(section.title).addClass("sheader").appendTo("#acontent");
+            $("<div>").addClass("scontent").html(section.content).appendTo("#acontent");
+        }
+        toc.insertAfter("#summary");
+        $("a.slink").click(jumpSection);
     });
+}
+
+function jumpSection(e) {
+    var section = $(this).data("section");
+    var sid = "#s" + section
+    location.href = sid;
+    $(sid).addClass("highlight");
+    setTimeout("$('" + sid + "').removeClass('highlight')", 2000);
+    e.preventDefault();
 }
 
 function transform(id, dx, dy) {
