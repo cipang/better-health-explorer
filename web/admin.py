@@ -5,6 +5,7 @@ from .models import *
 @admin.register(ArticleAttr)
 class ArticleAttrAdmin(admin.ModelAdmin):
     list_display = ["article", "length", "media", "care", "reading"]
+    search_fields = ["article__title"]
 
 
 @admin.register(ArticleSimilarity)

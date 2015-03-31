@@ -11,6 +11,7 @@ import sys
 
 Point = namedtuple("Point", ["x", "y"])
 CENTER = Point(130, 160)
+SLIDER_MIN = 1
 SLIDER_MAX = 20
 CENTER_DISTANCE_MIN = 100
 
@@ -64,7 +65,8 @@ def article_match_with_silders(current, sliders):
         exclude(article__id=current)
     for attr in qs:
         sim = _get_sim(current, attr.article.id)
-        b = (attr.length, attr.media, sim, attr.care)
+        # b = (attr.length, attr.media, sim, attr.care)
+        b = (attr.media, sim, attr.care, attr.reading)
         score = _cosine_similarity(a, b)
         # score = _dot_product(a, b)
         yield (attr, score, sim)

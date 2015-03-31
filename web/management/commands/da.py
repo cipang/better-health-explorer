@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError, make_option
+from collections.abc import MutableMapping
 from extract.models import *
 from web.models import *
+from web.views import SLIDER_MAX, SLIDER_MIN
 from bs4 import BeautifulSoup
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
@@ -8,31 +10,47 @@ from random import randint
 from . import readability
 import math
 import os
+import sys
 import re
 
 
-class Stats:
-    max_image_count = 0
-    max_word_count = 0
-    max_co_word_count = 0
-    max_reading = 0
+class Metadata(MutableMapping):
 
-    def __init__(self):
-        self.image_count = 0
-        self.word_count = 0
-        self.co_word = 0
-        self.reading = 0
+    """Store metadata of an article and perserve global min/max values for
+    normalization.
+    """
 
-    def __setattr__(self, name, value):
-        if name == "image_count" and value > Stats.max_image_count:
-            Stats.max_image_count = value
-        elif name == "word_count" and value > Stats.max_word_count:
-            Stats.max_word_count = value
-        elif name == "co_word_count" and value > Stats.max_co_word_count:
-            Stats.max_co_word_count = value
-        elif name == "reading" and value > Stats.max_reading:
-            Stats.max_reading = value
-        object.__setattr__(self, name, value)
+    max_values = dict()
+    min_values = dict()
+
+    def __init__(self, *args, **kwargs):
+        self.store = dict()
+        self.update(dict(*args, **kwargs))
+
+    def __getitem__(self, key):
+        return self.store[key]
+
+    def __setitem__(self, key, value):
+        self.store[key] = value
+        Metadata.min_values[key] = min(Metadata.min_values.get(key, sys.maxsize), value)
+        Metadata.max_values[key] = max(Metadata.max_values.get(key, 0), value)
+
+    def __delitem__(self, key):
+        raise NotImplementedError()
+
+    def __iter__(self):
+        return iter(self.store)
+
+    def __len__(self):
+        return len(self.store)
+
+    def norm(self, key):
+        a = self.store[key] - self.min_values[key]
+        b = self.max_values[key] - self.min_values[key]
+        return 0 if b == 0 else a / b
+
+    def normint(self, key, scale_min=SLIDER_MIN, scale_max=SLIDER_MAX):
+        return int(self.norm(key) * (scale_max - scale_min)) + scale_min
 
 
 class Command(BaseCommand):
@@ -43,19 +61,14 @@ class Command(BaseCommand):
                     default=False, help="Run similarity computation."),
     )
 
-    @staticmethod
-    def normalize(x, max_x, max_output=20, cast=math.ceil):
-        if max_x == 0:
-            return 0
-        result = cast((float(x) / float(max_x)) * max_output)
-        return max(min(max_output, result), 0)
-
     def extract_words(self, text):
+        """Tokenize a string using NLTK and return a set of lowercased words."""
         content = text.lower()
         tokens = self.tokenizer.tokenize(content)
         return set(w for w in tokens if w not in self.stopwords)
 
     def get_article_text(self, article):
+        """Return the text content of an article without HTML tags."""
         soup = BeautifulSoup(article.content)
         return soup.get_text()
 
@@ -69,10 +82,10 @@ class Command(BaseCommand):
                 aa = ArticleAttr.objects.get(article=article)
             except ArticleAttr.DoesNotExist:
                 aa = ArticleAttr(article=article)
-            aa.length = self.normalize(stats.word_count, Stats.max_word_count)
-            aa.media = self.normalize(stats.image_count, Stats.max_image_count)
+            aa.length = stats.normint("word_count")
+            aa.media = stats.media
             aa.care = stats.care
-            aa.reading = self.normalize(stats.reading, Stats.max_reading)
+            aa.reading = stats.normint("reading")
             aa.is_local = article.source in ("BHC")
             aa.save()
 
@@ -84,10 +97,9 @@ class Command(BaseCommand):
                     row = ArticleSimilarity.objects.get(a=a, b=b)
                 except ArticleSimilarity.DoesNotExist:
                     row = ArticleSimilarity(a=a, b=b)
-                row.similarity = self.normalize(stats.co_word_count,
-                                                Stats.max_co_word_count)
+                row.similarity = stats.normint("co_word_count")
                 if stats.linked_flag:
-                    row.similarity = self.normalize(row.similarity + 10, 20)
+                    row.similarity = min(SLIDER_MAX, row.similarity + 10)
                 row.save()
 
     def compute_stats(self):
@@ -99,27 +111,32 @@ class Command(BaseCommand):
         d = dict()
         qs = Article.objects.all().prefetch_related("image_set")
         for article in qs:
-            stats = Stats()
-            d[article] = stats
+            md = Metadata()
+            d[article] = md
 
             # Compute number of images.
-            stats.image_count = article.image_set.count()
+            md["image_count"] = article.image_set.count()
 
             # Compute length.
             content = self.get_article_text(article)
-            stats.word_count = len(content.split(" "))
+            md["word_count"] = len(content.split(" "))
+
+            # Compute the media dimension based on above two numbers.
+            md.media = 11 - md.normint("word_count", 1, 10)
+            if md.get("image_count"):
+                md.media += md.normint("image_count", 1, 10)
 
             # Compute reading level.
-            stats.reading = readability.grade_level(content)
+            md["reading"] = readability.grade_level(content)
 
             # Compute article nature: caring <-> conditions
             t, c = article.title, article.category
             if re_care.search(t) or re_care.search(c):
-                stats.care = randint(1, 7)
+                md.care = randint(1, 7)
             elif re_cond.search(t) or re_cond.search(c):
-                stats.care = randint(13, 20)
+                md.care = randint(13, 20)
             else:
-                stats.care = randint(8, 12)
+                md.care = randint(8, 12)
 
         return d
 
@@ -134,10 +151,10 @@ class Command(BaseCommand):
             for b in qs2:
                 assert a.id < b.id
                 b_words = self.extract_words(self.get_article_text(b))
-                stats = Stats()
-                stats.co_word_count = len(a_words & b_words)
-                stats.linked_flag = b.title.lower() in a_links
-                l.append((a.id, b.id, stats))
+                md = Stats()
+                md["co_word_count"] = len(a_words & b_words)
+                md.linked_flag = b.title.lower() in a_links
+                l.append((a.id, b.id, md))
                 c += 1
                 if c % 100 == 0:
                     self.stdout.write("{0} records written.".format(c))

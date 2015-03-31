@@ -7,6 +7,7 @@ DIR_DOWN = 3
 
 
 class Rectangle(object):
+
     """Define a rectangle which is used for overlap removal.
 
     This class stores the coordinate of the left-top corner and the size of a
@@ -14,6 +15,7 @@ class Rectangle(object):
     an overlap removal process. One may inherit this class to store additional
     values/identifiers along with a rectangle.
     """
+
     def __init__(self, x=0, y=0, width=0, height=0):
         self.x = x
         self.y = y
