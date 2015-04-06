@@ -19,7 +19,9 @@ ALL_SIM = None
 
 
 class FishRect(Rectangle):
+
     """Displayed rectangle of each fish. For overlap removal."""
+
     def __init__(self, x, y, width, height, fish_id):
         super(FishRect, self).__init__(x, y, width, height)
         self.fish_id = fish_id
@@ -97,7 +99,8 @@ def catch_fish(request):
                          reverse=True)
     all_results = sorted(all_results[0:10], key=lambda x: x[0].article.title)
 
-    result = dict()
+    result = list()
+    rank = 0
     for r in all_results:
         attr, score, sim = r
         # Compute length with similarity
@@ -112,12 +115,13 @@ def catch_fish(request):
         dx += randint(0, 5)
         dy += randint(0, 5)
         fish_str_id = "fish{0}".format(attr.article.id)
-        result[fish_str_id] = ({"id": attr.article.id,
-                                "title": attr.article.title,
-                                "score": score,
-                                "similarity": sim,
-                                "dx": dx,
-                                "dy": dy})
+        result.append({"id": attr.article.id,
+                       "sid": fish_str_id,
+                       "rank": rank,
+                       "title": attr.article.title,
+                       "score": score,
+                       "similarity": sim})
+        rank += 1
 
     # Do overlap removal.
     # or_list = [FishRect(f["dx"], f["dy"], 120, 50, k) for k, f in result.items()]

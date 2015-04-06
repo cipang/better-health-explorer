@@ -3,7 +3,6 @@ var sliderValues = [10, 10, 10, 10];
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
-        //$("#acontent").html(data.content);
         $("#current, #pagetitle").html(data.title);
         $("#acontent").empty();
         $("<div>").attr("id", "summary").html(data.summary).appendTo("#acontent");
@@ -29,39 +28,10 @@ function jumpSection(e) {
     e.preventDefault();
 }
 
-function transform(id, dx, dy) {
-    var translate = "translate(" + dx + "px, " + dy + "px)";
-    setTimeout("$('#" + id + "').css('transform', '" + translate + "')", 100);
-}
-
-function remove(id) {
-    // setTimeout("$('#" + id + "').css('transform', 'translate(300px,300px)')", 100);
-    setTimeout("$('#" + id + "').css('opacity', '0.3')", 100);
-    setTimeout("$('#" + id + "').remove()", 400);
-}
-
 function catchFish(article) {
     $.get("catchfish", {"article": article, "sliders": sliderValues},
         function (data, status, xhr) {
-            var result = data.result;
-            for (var id in result) {
-                var fish = result[id];
-                if (!pond[id]) {
-                    var div = $("<div>").addClass("fish");
-                    div.attr("id", id).data("article", fish.id);
-                    div.attr("title", fish.title).text(fish.title);
-                    div.click(fishClicked);
-                    // div.css("width", Math.max(120, fish.similarity / 20 * 180) + "px");
-                    // div.css("height", Math.max(50, fish.similarity / 20 * 80) + "px");
-                    div.appendTo("#pond");
-                }
-                transform(id, fish.dx, fish.dy);
-            }
-            for (var id in pond) {
-                if (!result[id])
-                    remove(id);
-            }
-            pond = result;
+            pond_showResult(data.result);
         }
     );
 }
