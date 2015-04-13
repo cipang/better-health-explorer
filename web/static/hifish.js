@@ -41,6 +41,7 @@ function pond_findExistingFish(fish) {
 }
 
 function pond_showResult(result) {
+    console.log("pond_showResult", result);
     var newFishes = new Array(result.length);
     for (var i = 0; i < result.length; i++)
         newFishes[i] = result[i].sid;
@@ -79,7 +80,8 @@ function pond_addFish(fish) {
 function pond_moveFish(fish) {
     var found = pond_findExistingFish(fish);
     if (!found)
-        throw "Attempt to move a fish that does not exist.";
+        //throw "Attempt to move a fish that does not exist.";
+        return;
     var newGroup = pond_computeGroup(fish.rank);
     if (found.group != newGroup) {
         pondSpaces[found.track][newGroup] = fish;
@@ -112,7 +114,7 @@ function pond_draw() {
 
 function pond_getLayout(fish) {
     var g = fish.group;
-    var l = 80 * (g + 1) + (1 - fish.score) * 100;
+    var l = 80 * (g + 1) + (1 - fish.score) * 0;
     var a = pondTracks[fish.track] * (Math.PI / 180);
     var x = Math.ceil(l * Math.cos(a))
     var y = Math.ceil(l * Math.sin(a))

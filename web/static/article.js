@@ -37,11 +37,13 @@ function catchFish(article) {
 }
 
 function openArticle(article) {
+    if (!currentArticle) {
+        for (var i = 0; i < sliderValues.length; i++)
+            sliderValues[i] = 10;
+        $(".slider").slider("value", 10);
+        $(".slidervalue").text(10);
+    }
     currentArticle = article ? article : initArticle;
-    for (var i = 0; i < sliderValues.length; i++)
-        sliderValues[i] = 10;
-    $(".slider").slider("value", 10);
-    $(".slidervalue").text(10);
     loadContent(currentArticle);
     catchFish(currentArticle);
 }

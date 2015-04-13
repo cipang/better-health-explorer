@@ -62,16 +62,29 @@ def _dot_product(v1, v2):
 
 
 def article_match_with_silders(current, sliders):
-    a = sliders
+    # a = sliders
+    # qs = ArticleAttr.objects.select_related("article").\
+    #     exclude(article__id=current)
+    # for attr in qs:
+    #     sim = _get_sim(current, attr.article.id)
+    #     # b = (attr.length, attr.media, sim, attr.care)
+    #     b = (attr.media, sim, attr.care, attr.reading)
+    #     score = _cosine_similarity(a, b)
+    #     # score = _dot_product(a, b)
+    #     yield (attr, score, sim)
+
+    # First use similarity to filter, then compute score within the result pool.
+    sim = sliders[0]
+    a = sliders[1:]
     qs = ArticleAttr.objects.select_related("article").\
         exclude(article__id=current)
-    for attr in qs:
-        sim = _get_sim(current, attr.article.id)
-        # b = (attr.length, attr.media, sim, attr.care)
-        b = (attr.media, sim, attr.care, attr.reading)
+    pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
+    pool.sort(key=lambda x: abs(x[1] - sim))
+    for t in pool[0:50]:
+        attr = t[0]
+        b = (attr.media, attr.care, attr.reading)
         score = _cosine_similarity(a, b)
-        # score = _dot_product(a, b)
-        yield (attr, score, sim)
+        yield (attr, score, t[1])
 
 
 def _get_sim(a, b):

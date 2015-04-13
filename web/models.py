@@ -1,5 +1,6 @@
 from django.db import models
 from extract.models import Article
+from collections import Counter
 
 
 class ArticleAttr(models.Model):
@@ -49,3 +50,8 @@ class Section(models.Model):
 
     def __str__(self):
         return "{0} {1}".format(self.article_id, self.section_no)
+
+
+def distribution(things):
+    c = Counter(things)
+    return [(e, c[e]) for e in sorted(c)]
