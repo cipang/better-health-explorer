@@ -14,9 +14,8 @@ function pond_computeGroup(rank) {
     return Math.trunc(rank / pondTracks.length);
 }
 
-function pond_findSpaceForRank(rank) {
+function pond_findSpaceForGroup(g) {
     var track;
-    var g = pond_computeGroup(rank);
     for (var i = 0; i < pondSpaces.length; i++) {
         if (g < pondSpaces[i].length && !pondSpaces[i][g]) {
             track = i;
@@ -24,8 +23,8 @@ function pond_findSpaceForRank(rank) {
         }
     }
     if (typeof(track) == "undefined")
-        throw "Cannot find a track for rank: " + rank;
-    return {"track": track, "group": g, "rank": rank};
+        throw "Cannot find a track for group: " + g;
+    return {"track": track, "group": g};
 }
 
 function pond_findExistingFish(fish) {
@@ -41,10 +40,11 @@ function pond_findExistingFish(fish) {
 }
 
 function pond_showResult(result) {
-    console.log("pond_showResult", result);
+    console.log("pond_showResult", new Date());
     var newFishes = new Array(result.length);
     for (var i = 0; i < result.length; i++)
         newFishes[i] = result[i].sid;
+
     // Remove expired fishes before moving in new fishes.
     for (var track = 0; track < pondSpaces.length; track++) {
         for (var group = 0; group < pondLevels; group++) {
@@ -56,10 +56,11 @@ function pond_showResult(result) {
             }
         }
     }
+
     // Add or move fishes with the result list.
     for (var i = result.length - 1; i >= 0; i--) {
         var f = result[i];
-        if (pondFishes[f.sid])
+        if (pondFishes[f.sid] && pondFishes[f.sid].flag != "D")
             pond_moveFish(f);
         else
             pond_addFish(f);
@@ -69,7 +70,7 @@ function pond_showResult(result) {
 }
 
 function pond_addFish(fish) {
-    var addr = pond_findSpaceForRank(fish.rank);
+    var addr = pond_findSpaceForGroup(pond_computeGroup(fish.rank));
     pondSpaces[addr.track][addr.group] = fish;
     fish.track = addr.track;
     fish.group = addr.group;
@@ -79,14 +80,19 @@ function pond_addFish(fish) {
 
 function pond_moveFish(fish) {
     var found = pond_findExistingFish(fish);
-    if (!found)
-        //throw "Attempt to move a fish that does not exist.";
+    if (!found) {
+        console.log("Attempt to move a fish that does not exist: " + fish.sid);
         return;
+    }
     var newGroup = pond_computeGroup(fish.rank);
     if (found.group != newGroup) {
-        pondSpaces[found.track][newGroup] = fish;
+        var addr = pond_findSpaceForGroup(newGroup);
+        if (pondSpaces[addr.track][addr.group])
+            throw "Move fish internal error: " + fish.sid;
+        pondSpaces[addr.track][addr.group] = fish;
         pondSpaces[found.track][found.group] = null;
         fish.group = newGroup;
+        fish.track = addr.track;
         fish.flag = "M";
         pondFishes[fish.sid] = fish;
     }
@@ -139,6 +145,7 @@ function fish_transform(id, dx, dy) {
 
 function fish_remove(id) {
     // setTimeout("$('#" + id + "').css('transform', 'translate(300px,300px)')", 100);
-    setTimeout("$('#" + id + "').css('opacity', '0.3')", 100);
-    setTimeout("$('#" + id + "').remove()", 400);
+    // setTimeout("$('#" + id + "').css('opacity', '0.3')", 100);
+    // setTimeout("$('#" + id + "').remove()", 400);
+    $("#" + id).remove();
 }
