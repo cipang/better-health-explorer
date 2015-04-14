@@ -110,7 +110,8 @@ def catch_fish(request):
     all_results = sorted(article_match_with_silders(article_id, sliders),
                          key=lambda x: x[1],
                          reverse=True)
-    all_results = sorted(all_results[0:10], key=lambda x: x[0].article.title)
+    # all_results = sorted(all_results, key=lambda x: x[0].article.title)
+    all_results = all_results[0:10]
 
     result = list()
     rank = 0
@@ -128,10 +129,13 @@ def catch_fish(request):
         dx += randint(0, 5)
         dy += randint(0, 5)
         fish_str_id = "fish{0}".format(attr.article.id)
+        title = attr.article.title
+        if len(title) >= 28:
+            title = title[0:28].strip() + "..."
         result.append({"id": attr.article.id,
                        "sid": fish_str_id,
                        "rank": rank,
-                       "title": attr.article.title,
+                       "title": title,
                        "score": score,
                        "similarity": sim})
         rank += 1
