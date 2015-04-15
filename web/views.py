@@ -6,7 +6,6 @@ from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
 from collections import namedtuple
 import math
-import sys
 
 
 Point = namedtuple("Point", ["x", "y"])
@@ -74,13 +73,14 @@ def article_match_with_silders(current, sliders):
 
     # First use similarity to filter, then compute score within the result pool.
     sim = sliders[0]
-    a = sliders[1:]
+    a = sliders[1:]  # + [randint(1, 10)]
     qs = ArticleAttr.objects.select_related("article").\
         exclude(article__id=current)
     pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
     pool.sort(key=lambda x: abs(x[1] - sim))
     for t in pool[0:50]:
         attr = t[0]
+        # b = (attr.media, attr.care, attr.reading, randint(1, 10))
         b = (attr.media, attr.care, attr.reading)
         score = _cosine_similarity(a, b)
         yield (attr, score, t[1])

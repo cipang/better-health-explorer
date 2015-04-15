@@ -209,12 +209,17 @@ function fish_remove(id) {
 }
 
 function fish_cleanup() {
+    var deleted = 0;
     $(".fish").not("#current").each(function (index) {
         var $this = $(this), sid = $this.attr("id");
-        if (!pondFishes[sid])
+        if (!pondFishes[sid]) {
             $this.remove();
+            deleted++;
+        }
     });
     setTimeout(fish_cleanup, 1000);
+    // if (deleted > 0)
+    //     console.log("fish_cleanup deleted: ", deleted);
 }
 
 $(document).ready(function () { fish_cleanup() });
