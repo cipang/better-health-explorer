@@ -49,8 +49,7 @@ def content(request):
 def _cosine_similarity(v1, v2):
     sumxx, sumxy, sumyy = 0, 0, 0
     for i in range(len(v1)):
-        x = v1[i]
-        y = v2[i]
+        x, y = v1[i], v2[i]
         sumxx += x * x
         sumyy += y * y
         sumxy += x * y
@@ -106,12 +105,12 @@ def catch_fish(request):
     sliders = list(map(int, request.GET.getlist("sliders[]")))
     assert len(sliders)
 
-    angles = (a for a in range(0, sys.maxsize, 60))
+    # angles = (a for a in range(0, sys.maxsize, 60))
     all_results = sorted(article_match_with_silders(article_id, sliders),
                          key=lambda x: x[1],
                          reverse=True)
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
-    all_results = all_results[0:10]
+    all_results = all_results[0:12]
 
     result = list()
     rank = 0
@@ -122,12 +121,12 @@ def catch_fish(request):
         #         CENTER_DISTANCE_MIN)
 
         # Compute length with slider matching.
-        l = score * CENTER.y * 0.75
-        angle = next(angles)
-        dx = int(l * math.cos(angle))    # Compute x and y offsets.
-        dy = int(l * math.sin(angle))
-        dx += randint(0, 5)
-        dy += randint(0, 5)
+        # l = score * CENTER.y * 0.75
+        # angle = next(angles)
+        # dx = int(l * math.cos(angle))    # Compute x and y offsets.
+        # dy = int(l * math.sin(angle))
+        # dx += randint(0, 5)
+        # dy += randint(0, 5)
         fish_str_id = "fish{0}".format(attr.article.id)
         title = attr.article.title
         if len(title) >= 28:

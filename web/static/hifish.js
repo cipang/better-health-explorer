@@ -45,62 +45,7 @@ function pond_computeGroup(rank) {
     return Math.trunc(rank / pondTracks.length);
 }
 
-function pond_findSpaceForGroup(g) {
-    var track;
-    for (var i = 0; i < pondSpaces.length; i++) {
-        if (!pondSpaces[i][g] || pondSpaces[i][g].flag == "C") {
-            track = i;
-            break;
-        }
-    }
-    if (typeof(track) == "undefined")
-        throw "Cannot find a track for group: " + g;
-    return {"track": track, "group": g};
-}
-
-function pond_findExistingFish(fish) {
-    for (var track = 0; track < pondSpaces.length; track++)
-        for (var group = 0; group < pondLevels; group++)
-            if (pondSpaces[track][group])
-                if (pondSpaces[track][group].sid == fish.sid ||
-                    pondSpaces[track][group].id == fish.id)
-                    return {"track": track, "group": group,
-                            "fish": pondSpaces[track][group]}
-    return false;
-}
-
 function pond_showResult(result) {
-    /*var newFishes = new Array(result.length);
-    for (var i = 0; i < result.length; i++)
-        newFishes[i] = result[i].sid;
-
-    // Remove expired fishes before moving in new fishes.
-    for (var track = 0; track < pondSpaces.length; track++) {
-        for (var group = 0; group < pondLevels; group++) {
-            if (pondSpaces[track][group]) {
-                var sid = pondSpaces[track][group].sid;
-                if ($.inArray(sid, newFishes) == -1) {
-                    pondSpaces[track][group] = null;
-                    pondFishes[sid].flag = "D";
-                }
-            }
-        }
-    }
-
-    // Add or move fishes with the result list.
-    for (var i = result.length - 1; i >= 0; i--) {
-        var f = result[i];
-        if (pondFishes[f.sid] && pondFishes[f.sid].flag == "C")
-            pond_moveFish(f);
-        else
-            pond_addFish(f);
-    }
-
-    for (var track = 0; track < pondSpaces.length; track++) {
-        for (var group = 0; group < pondLevels; group++) {
-            console.log(track, group, "",
-                    pondSpaces[track][group] ? pondSpaces[track][group].flag : null); }}*/
-
     round++;
     var newFishes = {};
     var alloc = allocTable_new();
@@ -115,11 +60,9 @@ function pond_showResult(result) {
             pond_addFish(alloc, newFishes, fish);
         }
     }
-    console.log("Alloc Table", alloc);
 
     for (var sid in pondFishes) {
         if (!newFishes[sid]) {
-            console.log("del", sid);
             fish_remove(sid);
         }
     }
@@ -192,6 +135,7 @@ function pond_getLayout(fish) {
     var g = fish.group;
     var t = fish.track;
     var output;
+
     // var l = 80 * (g + 1) + (1 - fish.score) * 0;
     // var a = pondTracks[fish.track] * (Math.PI / 180);
     // var x = Math.ceil(l * Math.cos(a))
@@ -240,7 +184,7 @@ function fish_add(fish, dx, dy) {
 
 function fish_transform(id, dx, dy) {
     if (!document.getElementById(id))
-        console.log(id + " not found.");
+        console.log("Fish not found: " + id);
     var translate = "translate(" + dx + "px, " + dy + "px)";
     setTimeout("$('#" + id + "').css('transform', '" + translate + "')", 100);
 }
