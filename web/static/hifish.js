@@ -185,13 +185,36 @@ function fish_add(fish, dx, dy) {
 function fish_transform(id, dx, dy) {
     if (!document.getElementById(id))
         console.log("Fish not found: " + id);
-    var translate = "translate(" + dx + "px, " + dy + "px)";
-    setTimeout("$('#" + id + "').css('transform', '" + translate + "')", 100);
+    var translate = css_makeTranslate(dx, dy);
+    var s = "$('#" + id + "').css({'transform': '" + translate + "', "+
+        "'opacity': '1'}).data('dx', " + dx + ").data('dy', " + dy + ")";
+    setTimeout(s, 100);
+}
+
+function css_makeTranslate(x, y) {
+    return "translate(" + x + "px, " + y + "px)";
 }
 
 function fish_remove(id) {
-    // setTimeout("$('#" + id + "').css('transform', 'translate(300px,300px)')", 100);
-    // setTimeout("$('#" + id + "').css('opacity', '0.3')", 100);
-    // setTimeout("$('#" + id + "').remove()", 400);
-    $("#" + id).remove();
+    var $obj = $("#" + id)
+    var dx = $obj.data("dx"), dy = $obj.data("dy");
+    if (dx) {
+        dy = dy >= 0 ? 200 : -200;
+        setTimeout("$('#" + id + "').css('transform', '" +
+            css_makeTranslate(dx, dy) + "')", 100);
+    }
+    setTimeout("$('#" + id + "').css('opacity', '0')", 100);
+    // setTimeout("$('#" + id + "').remove()", 850);
+    // $("#" + id).remove();
 }
+
+function fish_cleanup() {
+    $(".fish").not("#current").each(function (index) {
+        var $this = $(this), sid = $this.attr("id");
+        if (!pondFishes[sid])
+            $this.remove();
+    });
+    setTimeout(fish_cleanup, 1000);
+}
+
+$(document).ready(function () { fish_cleanup() });
