@@ -45,6 +45,16 @@ def content(request):
         raise Http404("No such article: {0}.".format(article_id))
 
 
+def summary(request):
+    article_id = request.GET.get("article")
+    try:
+        a = Article.objects.get(id=article_id)
+        d = {"title": a.title, "summary": a.summary}
+        return JsonResponse(d)
+    except Article.DoesNotExist:
+        raise Http404("No such article: {0}.".format(article_id))
+
+
 def _cosine_similarity(v1, v2):
     sumxx, sumxy, sumyy = 0, 0, 0
     for i in range(len(v1)):

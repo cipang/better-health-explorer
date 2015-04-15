@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'web.views.home', name='home'),
     url(r'^content$', 'web.views.content'),
+    url(r'^summary$', 'web.views.summary'),
     url(r'^catchfish$', 'web.views.catch_fish'),
     url(r'^ortest$', 'web.views.overlap_removal_test'),
 )

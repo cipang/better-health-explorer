@@ -49,8 +49,18 @@ function openArticle(article) {
 }
 
 function fishClicked(e) {
-    var div = $(this);
-    openArticle(div.data("article"));
+    var $div = $(this);
+    var article = $div.data("article");
+    $("#previewtitle").text($div.text());
+    $.get("summary", {"article": article}, function (data, status, xhr) {
+        $("#previewtitle").text(data.title);
+        $("#previewcontent").text(data.summary);
+    });
+    $("#preview").data("article", article).modal("show");
+}
+
+function previewReadClicked(e) {
+    openArticle($("#preview").modal("hide").data("article"));
 }
 
 function changeSlider(d, value) {
@@ -68,5 +78,7 @@ function sliderSlide(e, ui) {
 
 $(document).ready(function () {
     $(".slider").slider({ min: 1, max: 20, value: 10, slide: sliderSlide });
+    $("#preview").modal();
+    $("#previewread").click(previewReadClicked);
     openArticle();
 });
