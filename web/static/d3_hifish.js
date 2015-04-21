@@ -3,42 +3,34 @@ var round = 0;
 
 function pond_showResult(result) {
     round++;
-    var rect = svg.selectAll("rect").data(result, fish_keyFunc);
-    rect.enter().
-        append("rect").
-        attr("x", fish_getX).
-        attr("y", 500).
-        attr("width", 120).
-        attr("height", 50).
+    var g = svg.selectAll("g").data(result, fish_keyFunc);
+    var enter = g.enter().append("g").
+        attr("transform", function (d) { return "translate(" + fish_getX(d) + ",500)" }).
         attr("data-article", fish_keyFunc).
         attr("id", function (d) { return d.sid; }).
-        attr({"rx": 5, "ry": 5}).
+        attr("data-article", fish_keyFunc);
+
+    enter.append("rect").
+        attr({"rx": 5, "ry": 5, "x": 0, "y": 0}).
+        attr("width", 120).
+        attr("height", 50).
         attr("fill", "#ffffff").
-        attr({"stroke": "#000000", "stroke-width": 2});
+        attr({"stroke": "#000000", "stroke-width": 2}).
+        on("click", fishClicked);
 
-    rect.transition().duration(1000).
-        attr("x", fish_getX).
-        attr("y", fish_getY);
-
-    rect.exit().
-        transition().duration(1000).
-            attr("y", 500).
-            remove();
-
-    var text = svg.selectAll("text").data(result, fish_keyFunc);
-    text.enter().
-        append("text").
+    enter.append("text").
         text(fish_getTitle).
-        attr("dy", "15").
-        attr("x", fish_getX).
-        attr("y", 500).
-        attr("fill", "red");
+        attr({"x": 0, "y": 0, "dx": 7, "dy": 17});
 
-    text.transition().duration(1000).
-        attr("x", fish_getX).
-        attr("y", fish_getY);
+    g.transition().duration(1000).
+        attr("transform", function (d) { return "translate(" + fish_getX(d) +
+            "," + fish_getY(d) + ")" });
 
-    text.exit().remove();
+    g.exit().
+        transition().duration(1000).
+            attr("transform", function (d) { return "translate(" + fish_getX(d) +
+                ",500)" }).
+            remove();
 }
 
 function pond_computeGroup(rank) {
@@ -60,7 +52,7 @@ function fish_getY(fish) {
 }
 
 function fish_getTitle(fish) {
-    return fish.title;
+    return fish.title + "\n" + fish.score;
 }
 
 function fish_keyFunc(fish) {

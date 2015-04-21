@@ -49,9 +49,8 @@ function openArticle(article) {
 }
 
 function fishClicked(e) {
-    var $div = $(this);
-    var article = $div.data("article");
-    $("#previewtitle").text($div.text());
+    var $obj = $(this);
+    var article = $obj.data("article") || $obj.parent().data("article");
     $.get("summary", {"article": article}, function (data, status, xhr) {
         $("#previewtitle").text(data.title);
         $("#previewcontent").text(data.summary);

@@ -23,7 +23,7 @@
     background-color: #e6e6fa;
 }
 
-#pond .fish {
+/*#pond .fish {
     position: absolute;
     border-radius: 20px;
     text-align: center;
@@ -37,6 +37,10 @@
     top: 160px;
     left: 130px;
     cursor: pointer;
+}*/
+
+#pond text {
+    font-size: 12px;
 }
 
 #pond #current {
