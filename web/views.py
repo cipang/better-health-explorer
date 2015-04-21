@@ -6,6 +6,7 @@ from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
 from collections import namedtuple
 import math
+import textwrap
 
 
 Point = namedtuple("Point", ["x", "y"])
@@ -15,6 +16,8 @@ SLIDER_MAX = 20
 CENTER_DISTANCE_MIN = 100
 
 ALL_SIM = None
+
+text_wrapper = textwrap.TextWrapper(width=28)
 
 
 class FishRect(Rectangle):

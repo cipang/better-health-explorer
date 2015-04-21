@@ -20,7 +20,9 @@ function pond_showResult(result) {
 
     enter.append("text").
         text(fish_getTitle).
-        attr({"x": 0, "y": 0, "dx": 7, "dy": 17});
+        attr({"x": 10, "y": 5, "dx": 0, "dy": "1em"}).
+        attr({"width": 120, "height": 50}).
+        call(wrap, 100);
 
     g.transition().duration(1000).
         attr("transform", function (d) { return "translate(" + fish_getX(d) +
@@ -52,11 +54,36 @@ function fish_getY(fish) {
 }
 
 function fish_getTitle(fish) {
-    return fish.title + "\n" + fish.score;
+    return fish.title + "\n" + fish.score.toPrecision(4);
 }
 
 function fish_keyFunc(fish) {
     return fish.id;
+}
+
+function wrap(text, width) {
+    text.each(function() {
+        var text = d3.select(this),
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line = [],
+                lineNumber = 0,
+                lineHeight = 1.125, // ems
+                x = text.attr("x"),
+                y = text.attr("y"),
+                dy = parseFloat(text.attr("dy")),
+                tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
+        }
+    });
 }
 
 $(document).ready(function () {
