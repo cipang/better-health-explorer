@@ -10,8 +10,10 @@
     <script src="{% static 'bootstrap.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'jquery-ui.min.css' %}">
     <script src="{% static 'jquery-ui.min.js' %}"></script>
+    <script src="{% static 'd3.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <script src="{% static 'hifish.js' %}"></script>
+    <!--script src="{% static 'hifish.js' %}"></script-->
+    <script src="{% static 'd3_hifish.js' %}"></script>
     <script src="{% static 'article.js' %}"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -28,9 +30,11 @@
 
     <div id="panel">
         <h1>Explore this topic...</h1>
-        <div id="pond">
+        <!--div id="pond">
             <div class="fish" id="current">CENTER</div>
-        </div>
+        </div-->
+        <div id="current" class="pondtitle">CENTER</div>
+        <svg id="pond"></svg>
         <div id="sliders">
             <!--div class="dimension">
                 <span class="pull-left">Short</span>
