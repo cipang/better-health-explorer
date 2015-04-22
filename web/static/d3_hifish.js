@@ -16,13 +16,18 @@ function pond_showResult(result) {
         attr("height", 50).
         attr("fill", "#ffffff").
         attr({"stroke": "#000000", "stroke-width": 2}).
-        on("click", fishClicked);
+        on("click", fishClicked).
+        on("mouseover", fishMouseOver).
+        on("mouseout", fishMouseOut);
 
     enter.append("text").
         text(fish_getTitle).
         attr({"x": 10, "y": 5, "dx": 0, "dy": "1em"}).
         attr({"width": 120, "height": 50}).
-        call(wrap, 100);
+        call(wrap, 100).
+        on("click", fishClicked).
+        on("mouseover", fishMouseOver).
+        on("mouseout", fishMouseOut);
 
     g.transition().duration(1000).
         attr("transform", function (d) { return "translate(" + fish_getX(d) +
@@ -54,7 +59,7 @@ function fish_getY(fish) {
 }
 
 function fish_getTitle(fish) {
-    return fish.title + "\n" + fish.score.toPrecision(4);
+    return fish.title + "\n" + (fish.score * 100).toPrecision(4);
 }
 
 function fish_keyFunc(fish) {

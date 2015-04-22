@@ -1,5 +1,6 @@
 var initArticle = 93, currentArticle, pond = new Object();
 var sliderValues = [10, 10, 10, 10];
+var hoveredFish = null, hoveredObj = null;
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
@@ -48,14 +49,50 @@ function openArticle(article) {
     catchFish(currentArticle);
 }
 
-function fishClicked(e) {
+function fishClicked() {
     var $obj = $(this);
     var article = $obj.data("article") || $obj.parent().data("article");
-    $.get("summary", {"article": article}, function (data, status, xhr) {
+    /*$.get("summary", {"article": article}, function (data, status, xhr) {
         $("#previewtitle").text(data.title);
         $("#previewcontent").text(data.summary);
     });
-    $("#preview").data("article", article).modal("show");
+    $("#preview").data("article", article).modal("show");*/
+    openArticle(article);
+    fishMouseOut();
+}
+
+function fishMouseOver() {
+    var $obj = $(this);
+    var article = $obj.data("article") || $obj.parent().data("article");
+    hoveredFish = article;
+    hoveredObj = $obj.closest("g");
+    setTimeout(tooltipRun, 100);
+}
+
+function fishMouseOut() {
+    hoveredFish = null;
+    setTimeout(tooltipRun, 100);
+}
+
+function tooltipRun() {
+    var pop = $("#hoverpop");
+    if (hoveredFish && hoveredFish != pop.data("article")) {
+        var offset = hoveredObj.offset();
+        var x = offset.left - pop.outerWidth(true) - 5;
+        var y = offset.top - $("body").scrollTop();
+        pop.data("article", hoveredFish);
+        pop.find("h1").text("Please Wait...");
+        pop.find("#popsummary").text("");
+        pop.css("left", x + "px").css("top", y + "px").fadeIn("fast");
+
+        $.get("summary", {"article": hoveredFish}, function (data, status, xhr) {
+            var h1 = pop.find("h1").text(data.title).outerHeight(true);
+            var h2 = pop.find("#popsummary").text(data.summary).outerHeight(true);
+            pop.css("height", (30 + h1 + h2) + "px");
+        });
+    } else if (!hoveredFish) {
+        pop.removeData("article").fadeOut("fast");
+    }
 }
 
 function previewReadClicked(e) {
