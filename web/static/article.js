@@ -1,5 +1,5 @@
 var initArticle = 93, currentArticle, pond = new Object();
-var sliderValues = [10, 10, 10, 10];
+var sliderValues = [17, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
 
 function loadContent(article) {
@@ -38,12 +38,6 @@ function catchFish(article) {
 }
 
 function openArticle(article) {
-    if (!currentArticle) {
-        for (var i = 0; i < sliderValues.length; i++)
-            sliderValues[i] = 10;
-        $(".slider").slider("value", 10);
-        $(".slidervalue").text(10);
-    }
     currentArticle = article ? article : initArticle;
     loadContent(currentArticle);
     catchFish(currentArticle);
@@ -87,8 +81,8 @@ function tooltipRun() {
         pop.css("left", x + "px").css("top", y + "px").fadeIn("fast");
 
         $.get("summary", {"article": hoveredFish}, function (data, status, xhr) {
-            var h1 = pop.find("h1").text(data.title).outerHeight(true);
-            var h2 = pop.find("#popsummary").text(data.summary + " " + pop.data("score")).outerHeight(true);
+            var h1 = pop.find("h1").html(data.title).outerHeight(true);
+            var h2 = pop.find("#popsummary").html(data.summary + "<br><br>" + pop.data("score")).outerHeight(true);
             pop.css("height", (30 + h1 + h2) + "px");
         });
     } else if (!hoveredFish) {
@@ -114,7 +108,10 @@ function sliderSlide(e, ui) {
 }
 
 $(document).ready(function () {
-    $(".slider").slider({ min: 1, max: 20, value: 10, slide: sliderSlide });
+    $(".slider").each(function (index, obj) {
+        var sliderID = $(obj).data("dim");
+        $(obj).slider({ min: 1, max: 20, value: sliderValues[sliderID], slide: sliderSlide });
+    });
     $("#preview").modal();
     $("#previewread").click(previewReadClicked);
     openArticle();

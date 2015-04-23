@@ -152,7 +152,7 @@ def catch_fish(request):
         elif last_score - score < margin and len(tier0) < 6 and not tier1:
             selected_tier = tier0
             fish["tier"] = 0
-        elif len(tier1) < 9:
+        elif len(tier0) + len(tier1) < 12:
             selected_tier = tier1
             fish["tier"] = 1
         else:

@@ -13,14 +13,15 @@
     background-color: #eee;
 }
 
-#panel h1 { font-size: 18px; margin: 15px 0; }
-#panel h2 { font-size: 16px; margin: 15px 0; }
+#panel h1 { font-size: 16px; margin: 15px 0; }
+#panel h2 { font-size: 14px; margin: 1.2em 0; font-style: italic; font-weight: bold; }
 
 #pond {
     position: relative;
     width: 380px;
     height: 400px;
-    background-color: #e6e6fa;
+    background-color: inherit;
+    border: 1px solid #aaa;
 }
 
 /*#pond .fish {
@@ -40,7 +41,6 @@
 }*/
 
 #pond text, #pond rect {
-    font-size: 12px;
     cursor: pointer;
 }
 
@@ -73,7 +73,7 @@
 
 #hoverpop h1 {
     margin: 0 0 0.5em 0;
-    padding: 0.5em 0;
+    padding: 0 0 0.5em 0;
     border-bottom: 1px solid #ccc;
     font-size: 16px;
 }

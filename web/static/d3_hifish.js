@@ -17,7 +17,7 @@ function pond_showResult(result) {
 
     for (i in result) {
         var fish = result[i];
-        if (lastTier != fish.tier && cx != 5) nextRow();
+        // if (lastTier != fish.tier && cx != 5) nextRow();
 
         fish._width = fishWidth[fish.tier];
         fish._height = fishHeight[fish.tier];
@@ -35,8 +35,7 @@ function pond_showResult(result) {
         attr("transform", function (d) { return "translate(" + fish_getX(d) + ",500)" }).
         attr("data-article", fish_keyFunc).
         attr("id", function (d) { return d.sid; }).
-        attr("data-article", fish_keyFunc).
-        attr("data-score", function (d) { return (d.score * 100).toPrecision(4); });
+        attr("data-article", fish_keyFunc);
 
     enter.append("rect").
         attr({"rx": 5, "ry": 5, "x": 0, "y": 0}).
@@ -55,6 +54,7 @@ function pond_showResult(result) {
         on("mouseout", fishMouseOut);
 
     var update = g.transition().duration(1000).delay(fish_getDelay).
+        attr("data-score", function (d) { return (d.score * 100).toPrecision(4); }).
         attr("transform", function (d) { return "translate(" + fish_getX(d) +
             "," + fish_getY(d) + ")" });
 
@@ -67,6 +67,7 @@ function pond_showResult(result) {
 
     g.select("text").
         text(fish_getTitle).
+        attr("font-size", fish_getFontSize).
         attr("width", function (d) { return fish_getWidth(d) - 20; }).
         call(wrap);
 
@@ -91,6 +92,10 @@ function fish_getDelay(fish) {
 
 function fish_getOpacity(fish) {
     return fish.tier <= 1 ? 1.0 : 0.0;
+}
+
+function fish_getFontSize(fish) {
+    return fish.tier == 0 ? "15px" : "12px";
 }
 
 function fish_getX(fish) {
@@ -124,16 +129,17 @@ function fish_keyFunc(fish) {
 function wrap(text) {
     text.each(function() {
         var text = d3.select(this),
-                words = text.text().split(/\s+/).reverse(),
-                word,
-                line = [],
-                lineNumber = 0,
-                lineHeight = 1.125, // ems
-                x = text.attr("x"),
-                y = text.attr("y"),
-                dy = parseFloat(text.attr("dy")),
-                width = text.attr("width"),
-                tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.125, // ems
+            x = text.attr("x"),
+            y = text.attr("y"),
+            dy = parseFloat(text.attr("dy")),
+            width = text.attr("width"),
+            fontSize = text.attr("font-size"),
+            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em").attr("font-size", fontSize);
         while (word = words.pop()) {
             line.push(word);
             tspan.text(line.join(" "));
@@ -141,7 +147,7 @@ function wrap(text) {
                 line.pop();
                 tspan.text(line.join(" "));
                 line = [word];
-                tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                tspan = text.append("tspan").attr("x", x).attr("y", y).attr("font-size", fontSize).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
             }
         }
     });
