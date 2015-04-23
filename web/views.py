@@ -118,47 +118,52 @@ def catch_fish(request):
     sliders = list(map(int, request.GET.getlist("sliders[]")))
     assert len(sliders)
 
-    # angles = (a for a in range(0, sys.maxsize, 60))
     all_results = sorted(article_match_with_silders(article_id, sliders),
                          key=lambda x: x[1],
                          reverse=True)
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
-    all_results = all_results[0:12]
+    # all_results = all_results[0:12]
 
-    result = list()
-    rank = 0
-    for r in all_results:
-        attr, score, sim = r
-        # Compute length with similarity
-        # l = max((SLIDER_MAX - sim) / SLIDER_MAX * CENTER.y * 1,
-        #         CENTER_DISTANCE_MIN)
+    tier0, tier1, tier2 = list(), list(), list()
+    last_score = None
+    order = 0
+    for row in all_results:
+        attr, score, sim = row
 
-        # Compute length with slider matching.
-        # l = score * CENTER.y * 0.75
-        # angle = next(angles)
-        # dx = int(l * math.cos(angle))    # Compute x and y offsets.
-        # dy = int(l * math.sin(angle))
-        # dx += randint(0, 5)
-        # dy += randint(0, 5)
+        # Text-based attributes.
         fish_str_id = "fish{0}".format(attr.article.id)
         title = attr.article.title
         if len(title) >= 28:
             title = title[0:28].strip() + "..."
-        result.append({"id": attr.article.id,
-                       "sid": fish_str_id,
-                       "rank": rank,
-                       "title": title,
-                       "score": score,
-                       "similarity": sim})
-        rank += 1
 
-    # Do overlap removal.
-    # or_list = [FishRect(f["dx"], f["dy"], 120, 50, k) for k, f in result.items()]
-    # remove_overlap(or_list)
-    # for r in or_list:
-    #     result[r.fish_id]["dx"] = r.x
-    #     result[r.fish_id]["dy"] = r.y
+        # Create a fish "object".
+        fish = {"id": attr.article.id,
+                "sid": fish_str_id,
+                "order": order,
+                "title": title,
+                "score": score,
+                "similarity": sim}
 
+        # Choose a tier for the fish.
+        margin = 0.001
+        if len(tier0) < 3:
+            selected_tier = tier0
+            fish["tier"] = 0
+        elif last_score - score < margin and len(tier0) < 6 and not tier1:
+            selected_tier = tier0
+            fish["tier"] = 0
+        elif len(tier1) < 9:
+            selected_tier = tier1
+            fish["tier"] = 1
+        else:
+            selected_tier = tier2
+            fish["tier"] = 2
+        selected_tier.append(fish)
+
+        order += 1
+        last_score = score
+
+    result = tier0 + tier1 + tier2
     return JsonResponse({"result": result})
 
 

@@ -62,7 +62,8 @@
     height: 200px;
     position: fixed;
     box-shadow: 5px 5px 10px #aaa;
-    background-color: #fff;
+    background-color: #ffffca;
+    color: #000023;
     z-index: 1000;
     border: 1px solid #aaa;
     padding: 1em;

@@ -71,6 +71,7 @@ function fishMouseOver() {
 
 function fishMouseOut() {
     hoveredFish = null;
+    hoveredObj = null;
     setTimeout(tooltipRun, 100);
 }
 
@@ -80,14 +81,14 @@ function tooltipRun() {
         var offset = hoveredObj.offset();
         var x = offset.left - pop.outerWidth(true) - 5;
         var y = offset.top - $("body").scrollTop();
-        pop.data("article", hoveredFish);
+        pop.data("article", hoveredFish).data("score", hoveredObj.data("score"));
         pop.find("h1").text("Please Wait...");
         pop.find("#popsummary").text("");
         pop.css("left", x + "px").css("top", y + "px").fadeIn("fast");
 
         $.get("summary", {"article": hoveredFish}, function (data, status, xhr) {
             var h1 = pop.find("h1").text(data.title).outerHeight(true);
-            var h2 = pop.find("#popsummary").text(data.summary).outerHeight(true);
+            var h2 = pop.find("#popsummary").text(data.summary + " " + pop.data("score")).outerHeight(true);
             pop.css("height", (30 + h1 + h2) + "px");
         });
     } else if (!hoveredFish) {
