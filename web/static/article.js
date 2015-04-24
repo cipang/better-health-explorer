@@ -60,11 +60,13 @@ function fishMouseOver() {
     var article = $obj.data("article") || $obj.parent().data("article");
     hoveredFish = article;
     hoveredObj = $obj.closest("g");
+    hoveredObj.find("rect").attr("fill", "#ffff00");
     setTimeout(tooltipRun, 100);
 }
 
 function fishMouseOut() {
     hoveredFish = null;
+    hoveredObj.find("rect").attr("fill", "#ffffff");
     hoveredObj = null;
     setTimeout(tooltipRun, 100);
 }

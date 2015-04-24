@@ -91,7 +91,7 @@ def article_match_with_silders(current, sliders):
         exclude(article__id=current)
     pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
     pool.sort(key=lambda x: abs(x[1] - sim))
-    for t in pool[0:50]:
+    for t in pool[0:100]:
         attr = t[0]
         # b = (attr.media, attr.care, attr.reading, randint(1, 10))
         b = (attr.media, attr.care, attr.reading)
@@ -122,7 +122,7 @@ def catch_fish(request):
                          key=lambda x: x[1],
                          reverse=True)
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
-    # all_results = all_results[0:12]
+    all_results = all_results[0:50]
 
     tier0, tier1, tier2 = list(), list(), list()
     last_score = None
