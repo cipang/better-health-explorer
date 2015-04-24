@@ -1,7 +1,7 @@
 var svg;
 var round = 0;
 var fishWidth = [120, 120, 20];
-var fishHeight = [100, 50, 20];
+var fishHeight = [85, 50, 20];
 var cx = 0, cy = 5;
 
 function pond_showResult(result) {

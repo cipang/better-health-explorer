@@ -19,7 +19,7 @@
 #pond {
     position: relative;
     width: 380px;
-    height: 400px;
+    height: 380px;
     background-color: inherit;
     border: 1px solid #aaa;
 }
@@ -52,9 +52,17 @@
 }*/
 
 .pondtitle {
-    padding: 1em;
+    padding: 0.5em 1em 1em 1em;
     font-weight: bold;
     text-align: center;
+}
+
+#navcontrol {
+    font-size: 12px;
+}
+
+#goback, #gofwd {
+    visibility: hidden;
 }
 
 #hoverpop {
@@ -111,3 +119,5 @@
 }
 
 .scontent br:last-child, .scontent br:first-child { display: none; }
+
+#pagetitle { margin-top: 10px; }

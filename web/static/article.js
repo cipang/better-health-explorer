@@ -1,6 +1,7 @@
 var initArticle = 93, currentArticle, pond = new Object();
 var sliderValues = [17, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
+var articleOpened = 0;
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
@@ -37,10 +38,28 @@ function catchFish(article) {
     );
 }
 
-function openArticle(article) {
-    currentArticle = article ? article : initArticle;
+function openArticle(article, state) {
+    currentArticle = !article ? initArticle : article;
+    if (!state) {
+        state = {"i": ++articleOpened, "article": currentArticle};
+        article ? window.history.pushState(state) :
+            window.history.replaceState(state);
+    }
+    console.log("open", state);
+    updateBackForwardButton(state.i > 1, state.i < articleOpened);
     loadContent(currentArticle);
     catchFish(currentArticle);
+}
+
+function windowPopStateHandler(e) {
+    var state = e.originalEvent.state;
+    console.log("popstate", state);
+    openArticle(state.article, state);
+}
+
+function updateBackForwardButton(sb, sf) {
+    $("#goback").css("visibility", sb ? "visible" : "hidden");
+    $("#gofwd").css("visibility", sf ? "visible" : "hidden");
 }
 
 function fishClicked() {
@@ -66,8 +85,10 @@ function fishMouseOver() {
 
 function fishMouseOut() {
     hoveredFish = null;
-    hoveredObj.find("rect").attr("fill", "#ffffff");
-    hoveredObj = null;
+    if (hoveredObj) {
+        hoveredObj.find("rect").attr("fill", "#ffffff");
+        hoveredObj = null;
+    }
     setTimeout(tooltipRun, 100);
 }
 
@@ -116,5 +137,6 @@ $(document).ready(function () {
     });
     $("#preview").modal();
     $("#previewread").click(previewReadClicked);
+    $(window).on("popstate", windowPopStateHandler);
     openArticle();
 });

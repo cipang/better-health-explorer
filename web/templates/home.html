@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>hiFISH</title>
 
     {% load staticfiles %}
     <script src="{% static 'jquery-1.11.2.min.js' %}"></script>
@@ -38,8 +38,15 @@
         <div id="pond">
             <div class="fish" id="current">CENTER</div>
         </div-->
-        <div class="pondtitle">Explore <span id="current">CENTER</span>...</div>
+        <div class="pondtitle">Explore <span id="current">X</span>...</div>
         <svg id="pond"></svg>
+
+        <div id="navcontrol">
+            <span class="pull-left" id="goback"><a href="javascript:window.history.back()">Go Back</a></span>
+            <span class="pull-right" id="gofwd"><a href="javascript:window.history.forward()">Go Forward</a></span>
+            <br class="clearfix">
+        </div>
+
         <div id="sliders">
             <!--div class="dimension">
                 <span class="pull-left">Short</span>
