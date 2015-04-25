@@ -122,7 +122,7 @@ def catch_fish(request):
                          key=lambda x: x[1],
                          reverse=True)
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
-    all_results = all_results[0:50]
+    all_results = all_results[0:55]
 
     tier0, tier1, tier2 = list(), list(), list()
     last_score = None
@@ -133,8 +133,8 @@ def catch_fish(request):
         # Text-based attributes.
         fish_str_id = "fish{0}".format(attr.article.id)
         title = attr.article.title
-        if len(title) >= 28:
-            title = title[0:28].strip() + "..."
+        if len(title) >= 36:
+            title = title[0:36].strip() + "..."
 
         # Create a fish "object".
         fish = {"id": attr.article.id,

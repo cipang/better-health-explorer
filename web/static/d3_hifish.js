@@ -33,7 +33,6 @@ function pond_showResult(result) {
     var g = svg.selectAll("g").data(result, fish_keyFunc);
     var enter = g.enter().append("g").
         attr("transform", function (d) { return "translate(" + fish_getX(d) + ",500)" }).
-        attr("data-article", fish_keyFunc).
         attr("id", function (d) { return d.sid; }).
         attr("data-article", fish_keyFunc);
 
@@ -54,7 +53,6 @@ function pond_showResult(result) {
         on("mouseout", fishMouseOut);
 
     var update = g.transition().duration(1000).delay(fish_getDelay).
-        attr("data-score", function (d) { return (d.score * 100).toPrecision(4); }).
         attr("transform", function (d) { return "translate(" + fish_getX(d) +
             "," + fish_getY(d) + ")" });
 
