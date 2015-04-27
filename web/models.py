@@ -11,6 +11,7 @@ class ArticleAttr(models.Model):
     reading = models.SmallIntegerField(default=0)
     is_video = models.BooleanField(default=False)
     is_local = models.BooleanField(default=False)
+    color = models.CharField(max_length=20, blank=True)
 
     class Meta:
         verbose_name = "ArticleAttr"

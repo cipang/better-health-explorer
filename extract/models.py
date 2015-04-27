@@ -7,7 +7,7 @@ class Article(models.Model):
     title = models.CharField(max_length=200)
     summary = models.TextField()
     content = models.TextField()
-    category = models.CharField(max_length=200)
+    category = models.CharField(max_length=200, blank=True)
     remarks = models.CharField(max_length=150, null=True, blank=True)
     last_modified = models.DateTimeField(null=True, blank=True)
 
