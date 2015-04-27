@@ -87,6 +87,7 @@ class Command(BaseCommand):
             aa.care = stats.care
             aa.reading = stats.normint("reading")
             aa.is_local = article.source in ("BHC")
+            aa.is_video = article.source in ("BHCYT")
             aa.save()
 
         if options["sim"]:

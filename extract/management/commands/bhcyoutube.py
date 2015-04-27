@@ -2,9 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from django.db.transaction import atomic
 from extract.models import *
-from bs4 import BeautifulSoup
-import os
-import re
 import csv
 
 
