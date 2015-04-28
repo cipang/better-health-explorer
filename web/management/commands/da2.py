@@ -55,7 +55,6 @@ class Command(BaseCommand):
 
         self.stdout.write("Computing metadata...")
         result = self.compute_metadata()
-        article_count = len(result)
 
         self.stdout.write("Sorting and ranking...")
         self.sort_and_rank(result, lambda x: x.orig_care, False, "care")
@@ -172,5 +171,19 @@ class Command(BaseCommand):
 
         self.stdout.write("Sorting similarity...")
         all_article_ids = sorted(cossim_db.keys())
-
-        return l
+        max_objects_per_rank = round(len(all_article_ids) / ((SLIDER_MAX - SLIDER_MIN) + 1))
+        for i in all_article_ids:
+            cossim_tuples = list()
+            n, rank = 0, SLIDER_MIN
+            for j in all_article_ids:
+                if i == j:
+                    continue
+                ki, kj = (i, j) if i < j else (j, i)
+                cossim_tuples.append((i, j, cossim_db[ki][kj]))
+            cossim_tuples.sort(key=lambda x: x[2])      # Sort the cossim.
+            for t in cossim_tuples:
+                yield (t[0], t[1], rank)    # Equals to (i, j, rank)
+                n += 1
+                if n >= max_objects_per_rank:
+                    rank += 1
+                    n = 0
