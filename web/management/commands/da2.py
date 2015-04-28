@@ -53,21 +53,23 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Current NLTK data path: " + os.environ["NLTK_DATA"])
 
-        self.stdout.write("Computing metadata...")
-        result = self.compute_metadata()
+        # self.stdout.write("Computing metadata...")
+        # result = self.compute_metadata()
 
-        self.stdout.write("Sorting and ranking...")
-        self.sort_and_rank(result, lambda x: x.orig_care, False, "care")
-        self.sort_and_rank(result, lambda x: x.orig_reading, False, "reading")
-        self.sort_and_rank(result, lambda x: x.get_orig_media(), True, "media")
+        # self.stdout.write("Sorting and ranking...")
+        # self.sort_and_rank(result, lambda x: x.orig_care, False, "care")
+        # self.sort_and_rank(result, lambda x: x.orig_reading, False, "reading")
+        # self.sort_and_rank(result, lambda x: x.get_orig_media(), True, "media")
 
-        for x in result:
-            print(x)
+        # for x in result:
+        #     print(x)
 
         from web.models import distribution
-        print(distribution(x.care for x in result))
-        print(distribution(x.reading for x in result))
-        print(distribution(x.media for x in result))
+        # print(distribution(x.care for x in result))
+        # print(distribution(x.reading for x in result))
+        # print(distribution(x.media for x in result))
+
+        distribution((x[2] for x in self.compute_similarity()), printed=True)
 
         # for md in result:
         #     article = md.article
@@ -139,7 +141,7 @@ class Command(BaseCommand):
         self.stdout.write("\t" + attr)
         rank = SLIDER_MIN
         i = 0
-        max_objects_per_rank = round(len(metadata_list) / ((SLIDER_MAX - SLIDER_MIN) + 1))
+        max_objects_per_rank = math.ceil(len(metadata_list) / ((SLIDER_MAX - SLIDER_MIN) + 1))
         metadata_list.sort(key=key, reverse=reverse)
         for metadata in metadata_list:
             setattr(metadata, attr, rank)
@@ -166,12 +168,12 @@ class Command(BaseCommand):
                     cossim += 0.5
                 cossim_db[a.id][b.id] = cossim
                 i += 1
-                if i % 500 == 0:
-                    self.stdout.write("\t{0} records processed.".format(c))
+                if i % 1000 == 0:
+                    self.stdout.write("\t{0} records processed.".format(i))
+        self.stdout.write("\t{0} records processed.".format(i))
 
         self.stdout.write("Sorting similarity...")
         all_article_ids = sorted(cossim_db.keys())
-        max_objects_per_rank = round(len(all_article_ids) / ((SLIDER_MAX - SLIDER_MIN) + 1))
         for i in all_article_ids:
             cossim_tuples = list()
             n, rank = 0, SLIDER_MIN
@@ -181,6 +183,7 @@ class Command(BaseCommand):
                 ki, kj = (i, j) if i < j else (j, i)
                 cossim_tuples.append((i, j, cossim_db[ki][kj]))
             cossim_tuples.sort(key=lambda x: x[2])      # Sort the cossim.
+            max_objects_per_rank = math.ceil(len(cossim_tuples) / ((SLIDER_MAX - SLIDER_MIN) + 1))
             for t in cossim_tuples:
                 yield (t[0], t[1], rank)    # Equals to (i, j, rank)
                 n += 1

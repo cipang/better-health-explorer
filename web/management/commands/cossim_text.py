@@ -7,11 +7,11 @@ tokenizer = RegexpTokenizer(r'[a-z]+')
 stopwords = set(stopwords.words("english"))
 
 
-def extract_words(self, text):
+def extract_words(text):
     """Tokenize a string using NLTK and return a set of lowercased words."""
     content = text.lower()
-    tokens = self.tokenizer.tokenize(content)
-    return (w for w in tokens if w not in self.stopwords)
+    tokens = tokenizer.tokenize(content)
+    return (w for w in tokens if w not in stopwords)
 
 
 def cosine_similarity(vec1, vec2):

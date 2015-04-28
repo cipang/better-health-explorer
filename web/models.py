@@ -53,6 +53,10 @@ class Section(models.Model):
         return "{0} {1}".format(self.article_id, self.section_no)
 
 
-def distribution(things):
+def distribution(things, printed=False):
     c = Counter(things)
-    return [(e, c[e]) for e in sorted(c)]
+    dist = [(e, c[e]) for e in sorted(c)]
+    if printed:
+        for item in dist:
+            print("{0}\t{1}".format(*item))
+    return dist
