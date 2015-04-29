@@ -46,57 +46,58 @@ class Command(BaseCommand):
     args = ""
     help = "Run data analysis (ver. 2)"
     option_list = BaseCommand.option_list + (
-        make_option("--sim", action="store_true", dest="sim",
+        make_option("-s", action="store_true", dest="sim",
                     default=False, help="Run similarity computation."),
+        make_option("-a", action="store_true", dest="attr",
+                    default=False, help="Run attributes computation."),
     )
+
+    _colors = {
+        "conditions and treatments": "#e5f7fc",
+        "healthy living": "#ecede0",
+        "relationships and family": "#f2ebe8",
+        "services and support": "#f5e7b6",
+        "": ""
+    }
 
     def handle(self, *args, **options):
         self.stdout.write("Current NLTK data path: " + os.environ["NLTK_DATA"])
+        if not options["sim"] and not options["attr"]:
+            raise CommandError("No operation specified in the command line.")
 
-        # self.stdout.write("Computing metadata...")
-        # result = self.compute_metadata()
+        if options["attr"]:
+            self.stdout.write("Computing metadata...")
+            result = self.compute_metadata()
 
-        # self.stdout.write("Sorting and ranking...")
-        # self.sort_and_rank(result, lambda x: x.orig_care, False, "care")
-        # self.sort_and_rank(result, lambda x: x.orig_reading, False, "reading")
-        # self.sort_and_rank(result, lambda x: x.get_orig_media(), True, "media")
+            self.stdout.write("Sorting and ranking...")
+            self.sort_and_rank(result, lambda x: x.orig_care, False, "care")
+            self.sort_and_rank(result, lambda x: x.orig_reading, False, "reading")
+            self.sort_and_rank(result, lambda x: x.get_orig_media(), True, "media")
 
-        # for x in result:
-        #     print(x)
+            for md in result:
+                article = md.article
+                try:
+                    aa = ArticleAttr.objects.get(article=article)
+                except ArticleAttr.DoesNotExist:
+                    aa = ArticleAttr(article=article)
+                aa.length = md.orig_word_count
+                aa.media = md.media
+                aa.care = md.care
+                aa.reading = md.reading
+                aa.is_local = article.source in ("BHC")
+                aa.is_video = article.source in ("BHCYT")
+                aa.color = self.choose_color(article)
+                aa.save()
 
-        from web.models import distribution
-        # print(distribution(x.care for x in result))
-        # print(distribution(x.reading for x in result))
-        # print(distribution(x.media for x in result))
-
-        distribution((x[2] for x in self.compute_similarity()), printed=True)
-
-        # for md in result:
-        #     article = md.article
-        #     try:
-        #         aa = ArticleAttr.objects.get(article=article)
-        #     except ArticleAttr.DoesNotExist:
-        #         aa = ArticleAttr(article=article)
-        #     aa.length = stats.normint("word_count")
-        #     aa.media = stats.media
-        #     aa.care = stats.care
-        #     aa.reading = stats.normint("reading")
-        #     aa.is_local = article.source in ("BHC")
-        #     aa.is_video = article.source in ("BHCYT")
-        #     aa.save()
-
-        # if options["sim"]:
-        #     self.stdout.write("Computing similarity values...")
-        #     result = self.compute_similarity()
-        #     for a, b, stats in result:
-        #         try:
-        #             row = ArticleSimilarity.objects.get(a=a, b=b)
-        #         except ArticleSimilarity.DoesNotExist:
-        #             row = ArticleSimilarity(a=a, b=b)
-        #         row.similarity = stats.normint("co_word_count")
-        #         if stats.linked_flag:
-        #             row.similarity = min(SLIDER_MAX, row.similarity + 10)
-        #         row.save()
+        if options["sim"]:
+            result = self.compute_similarity()
+            for a, b, similarity in result:
+                try:
+                    row = ArticleSimilarity.objects.get(a=a, b=b)
+                except ArticleSimilarity.DoesNotExist:
+                    row = ArticleSimilarity(a=a, b=b)
+                row.similarity = similarity
+                row.save()
 
     def get_article_text(self, article):
         """Return the text content of an article without HTML tags."""
@@ -190,3 +191,10 @@ class Command(BaseCommand):
                 if n >= max_objects_per_rank:
                     rank += 1
                     n = 0
+
+    def choose_color(self, article):
+        if article.source != "BHC" or not article.category:
+            return ""
+        cat = article.category.split("/")
+        cat = cat[1].lower() if len(cat) > 2 else ""
+        return self._colors[cat]
