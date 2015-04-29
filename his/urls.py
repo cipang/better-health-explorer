@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^catchfish$', 'web.views.catch_fish'),
     url(r'^ortest$', 'web.views.overlap_removal_test'),
     url(r'^images/(?P<image>.+)$', 'web.views.image_redirect'),
+    url(r'^find-article$', 'web.views.find_article'),
 )

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import Http404, JsonResponse, HttpResponseRedirect
+from django.http import Http404, JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.conf import settings
 from extract.models import Article
 from web.models import *
@@ -219,3 +219,15 @@ def image_redirect(request, image):
     new_url = settings.STATIC_URL + "article-images/" + image
     print(new_url)
     return HttpResponseRedirect(new_url)
+
+
+def find_article(request):
+    url = request.GET.get("url")
+    if not url:
+        return HttpResponseBadRequest("No URL specified.")
+    title = url.replace(".html", "").replace("_", " ")
+    try:
+        a = Article.objects.get(title=title)
+        return JsonResponse({"article": a.id})
+    except Article.DoesNotExist:
+        raise Http404("No mapping for " + url)

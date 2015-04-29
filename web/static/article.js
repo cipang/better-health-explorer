@@ -22,6 +22,7 @@ function loadContent(article) {
         } else {
             $("<div>").html(data.content).insertAfter("#summary");
         }
+        handleArticleLinks();
     });
 }
 
@@ -47,15 +48,19 @@ function catchFish(article) {
 }
 
 function openArticle(article, isStated) {
+    if (!isStated)
+        window.history.pushState(getCurrentState());
     currentArticle = !article ? initArticle : article;
-    if (!isStated) articleOpened++;
+    if (!isStated)
+        articleOpened++;
     loadContent(currentArticle);
     catchFish(currentArticle);
+    if (!isStated)
+        window.history.pushState(getCurrentState());
 }
 
 function windowPopStateHandler(e) {
     var state = e.originalEvent.state;
-    console.log("popstate", state, state.sliderValues);
     sliderValues = state.sliderValues;
     openArticle(state.article, true);
     updateSlider();
@@ -71,11 +76,7 @@ function fishClicked() {
     var $obj = $(this);
     var article = $obj.data("article") || $obj.parent().data("article");
 
-    window.history.pushState(getCurrentState());
-    console.log("push", getCurrentState(), getCurrentState().sliderValues);
     openArticle(article);
-    window.history.pushState(getCurrentState());
-    console.log("push", getCurrentState(), getCurrentState().sliderValues);
     fishMouseOut();
     updateBackForwardButton(articleOpened > 1, false);
 }
@@ -148,6 +149,18 @@ function sliderSlide(e, ui) {
 function getCurrentState() {
     return {"i": articleOpened, "article": currentArticle,
         "sliderValues": sliderValues.slice()}
+}
+
+function handleArticleLinks() {
+    $("#acontent a").not(".slink").click(articleLinkClicked);
+}
+
+function articleLinkClicked(e) {
+    e.preventDefault();
+    var url = $(this).attr("href");
+    $.get("find-article", {"url": url}, function (data, status, xhr) {
+        openArticle(data.article);
+    });
 }
 
 $(document).ready(function () {
