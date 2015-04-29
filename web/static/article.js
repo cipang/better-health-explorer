@@ -31,7 +31,7 @@ function loadContent(article) {
 function jumpSection(e) {
     var section = $(this).data("section");
     var sid = "#s" + section
-    $(sid).addClass("highlight").ScrollTo();
+    $(sid).addClass("highlight").ScrollTo({"offsetTop": 50});
     setTimeout("$('" + sid + "').removeClass('highlight')", 2000);
     e.preventDefault();
 }
@@ -51,7 +51,7 @@ function catchFish(article) {
 function openArticle(article, isStated) {
     if (!isStated)
         window.history.pushState(getCurrentState());
-    currentArticle = !article ? initArticle : article;
+    currentArticle = article;
     if (!isStated)
         articleOpened++;
     loadContent(currentArticle);
@@ -172,6 +172,19 @@ $(document).ready(function () {
     $("#preview").modal();
     $("#previewread").click(previewReadClicked);
     $(window).on("popstate", windowPopStateHandler);
-    openArticle();
+
+    // Scrolling.
+    $(window).on("scroll", function () {
+        if ($(window).scrollTop() > 0)
+            $("#topbutton:not(:visible)").slideDown();
+        else
+            $("#topbutton:visible").slideUp();
+    });
+    $("#topbutton a").click(function (e) {
+        e.preventDefault();
+        $("body").ScrollTo();
+    });
+
+    openArticle(initArticle, true);
     window.history.replaceState(getCurrentState());
 });

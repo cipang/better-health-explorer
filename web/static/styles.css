@@ -123,3 +123,14 @@
 #pagetitle { margin-top: 10px; }
 
 .bhc-youtube-summary { display: none; }
+
+#topbutton {
+    position: fixed;
+    top: 1px;
+    width: 75px;
+    margin-left: -75px;
+    left: 50%;
+    font-size: 12px;
+    text-align: center;
+    display: none;
+}
