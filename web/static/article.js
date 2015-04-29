@@ -69,8 +69,9 @@ function windowPopStateHandler(e) {
 }
 
 function updateBackForwardButton(sb, sf) {
-    $("#goback").css("visibility", sb ? "visible" : "hidden");
-    $("#gofwd").css("visibility", sf ? "visible" : "hidden");
+    //$("#goback").css("visibility", sb ? "visible" : "hidden");
+    //$("#gofwd").css("visibility", sf ? "visible" : "hidden");
+    $("#navcontrol em").css("visibility", "visible");
 }
 
 function fishClicked() {
