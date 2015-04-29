@@ -40,7 +40,8 @@ function pond_showResult(result) {
         attr({"rx": 5, "ry": 5, "x": 0, "y": 0}).
         attr("width", fish_getWidth).
         attr("height", fish_getHeight).
-        attr("fill", "#ffffff").
+        attr("fill", fish_getColor).
+        attr("ofill", fish_getColor).
         attr({"stroke": "#ccc", "stroke-width": 1}).
         on("click", fishClicked).
         on("mouseover", fishMouseOver).
@@ -118,6 +119,10 @@ function fish_getHeight(fish) {
 
 function fish_getTitle(fish) {
     return fish.tier <= 1 ? fish.title : "";
+}
+
+function fish_getColor(fish) {
+    return fish.color == "" ? "#ffffff" : fish.color;
 }
 
 function fish_keyFunc(fish) {

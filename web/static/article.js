@@ -8,16 +8,20 @@ function loadContent(article) {
         $("#current, #pagetitle").html(data.title);
         $("#acontent").empty();
         $("<div>").attr("id", "summary").html(data.summary).appendTo("#acontent");
-        var toc = $("<ol>").attr("id", "toc");
-        for (var i = 0; i < data.sections.length; i++) {
-            var section = data.sections[i];
-            var li = $("<li>").appendTo(toc);
-            $("<a>").text(section.title).attr("href", "#").data("section", i).addClass("slink").appendTo(li);
-            $("<h2>").attr("id", "s" + i).text(section.title).addClass("sheader").appendTo("#acontent");
-            $("<div>").addClass("scontent").html(section.content).appendTo("#acontent");
+        if (data.sections.length) {
+            var toc = $("<ol>").attr("id", "toc");
+            for (var i = 0; i < data.sections.length; i++) {
+                var section = data.sections[i];
+                var li = $("<li>").appendTo(toc);
+                $("<a>").text(section.title).attr("href", "#").data("section", i).addClass("slink").appendTo(li);
+                $("<h2>").attr("id", "s" + i).text(section.title).addClass("sheader").appendTo("#acontent");
+                $("<div>").addClass("scontent").html(section.content).appendTo("#acontent");
+            }
+            toc.insertAfter("#summary");
+            $("a.slink").click(jumpSection);
+        } else {
+            $("<div>").html(data.content).insertAfter("#summary");
         }
-        toc.insertAfter("#summary");
-        $("a.slink").click(jumpSection);
     });
 }
 
@@ -88,7 +92,8 @@ function fishMouseOver() {
 function fishMouseOut() {
     hoveredFish = null;
     if (hoveredObj) {
-        hoveredObj.find("rect").attr("fill", "#ffffff");
+        var rect = hoveredObj.find("rect");
+        rect.attr("fill", rect.attr("ofill"));
         hoveredObj = null;
     }
     setTimeout(tooltipRun, 100);

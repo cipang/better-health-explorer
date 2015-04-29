@@ -18,9 +18,9 @@
 
 #pond {
     position: relative;
-    width: 380px;
-    height: 380px;
-    background-color: inherit;
+    width: 385px;
+    height: 385px;
+    background-color: #fff;
     border: 1px solid #aaa;
 }
 
@@ -121,3 +121,5 @@
 .scontent br:last-child, .scontent br:first-child { display: none; }
 
 #pagetitle { margin-top: 10px; }
+
+.bhc-youtube-summary { display: none; }

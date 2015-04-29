@@ -6,7 +6,6 @@ from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
 from collections import namedtuple
 import math
-import textwrap
 
 
 Point = namedtuple("Point", ["x", "y"])
@@ -14,10 +13,7 @@ CENTER = Point(130, 160)
 SLIDER_MIN = 1
 SLIDER_MAX = 20
 CENTER_DISTANCE_MIN = 100
-
 ALL_SIM = None
-
-text_wrapper = textwrap.TextWrapper(width=28)
 
 
 class FishRect(Rectangle):
@@ -41,7 +37,8 @@ def content(request):
         a = Article.objects.get(id=article_id)
         sections = [{"title": s.title, "content": s.content}
                     for s in a.section_set.all()]
-        d = {"title": a.title, "content": "", "summary": a.summary,
+        content = a.content if not sections else ""
+        d = {"title": a.title, "content": content, "summary": a.summary,
              "sections": sections}
         return JsonResponse(d)
     except Article.DoesNotExist:
@@ -86,7 +83,7 @@ def article_match_with_silders(current, sliders):
 
     # First use similarity to filter, then compute score within the result pool.
     sim = sliders[0]
-    a = sliders[1:]  # + [randint(1, 10)]
+    a = sliders  # + [randint(1, 10)]
     qs = ArticleAttr.objects.select_related("article").\
         exclude(article__id=current)
     pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
@@ -94,7 +91,7 @@ def article_match_with_silders(current, sliders):
     for t in pool[0:100]:
         attr = t[0]
         # b = (attr.media, attr.care, attr.reading, randint(1, 10))
-        b = (attr.media, attr.care, attr.reading)
+        b = (t[1], attr.media, attr.care, attr.reading)
         score = _cosine_similarity(a, b)
         yield (attr, score, t[1])
 
@@ -106,10 +103,11 @@ def _get_sim(a, b):
     # Retrieve similarity values if needed.
     global ALL_SIM
     if ALL_SIM is None:
+        print("Initalizing similarity...")
         qs = ArticleSimilarity.objects.all()
         ALL_SIM = dict(((row.a, row.b), row.similarity) for row in qs)
 
-    key = (a, b) if a < b else (b, a)
+    key = (a, b)
     return ALL_SIM.get(key, 0)
 
 
@@ -142,7 +140,8 @@ def catch_fish(request):
                 "order": order,
                 "title": title,
                 "score": score,
-                "similarity": sim}
+                "similarity": sim,
+                "color": attr.color}
 
         # Choose a tier for the fish.
         margin = 0.001
