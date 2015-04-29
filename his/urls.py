@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^summary$', 'web.views.summary'),
     url(r'^catchfish$', 'web.views.catch_fish'),
     url(r'^ortest$', 'web.views.overlap_removal_test'),
+    url(r'^images/(?P<image>.+)$', 'web.views.image_redirect'),
 )

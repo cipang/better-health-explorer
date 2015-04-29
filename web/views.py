@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponseRedirect
+from django.conf import settings
 from extract.models import Article
 from web.models import *
 from web.overlapremoval import Rectangle, remove_overlap
@@ -212,3 +213,9 @@ def overlap_removal_test(request):
     new_rects = copy.deepcopy(rects)
     remove_overlap(new_rects)
     return render(request, "ortest.html", {"rects": rects, "nr": new_rects})
+
+
+def image_redirect(request, image):
+    new_url = settings.STATIC_URL + "article-images/" + image
+    print(new_url)
+    return HttpResponseRedirect(new_url)
