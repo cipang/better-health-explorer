@@ -23,14 +23,15 @@ function loadContent(article) {
             $("<div>").html(data.content).insertAfter("#summary");
         }
         handleArticleLinks();
+        if ($(window).scrollTop() != 0)
+            $("body").ScrollTo();
     });
 }
 
 function jumpSection(e) {
     var section = $(this).data("section");
     var sid = "#s" + section
-    location.href = sid;
-    $(sid).addClass("highlight");
+    $(sid).addClass("highlight").ScrollTo();
     setTimeout("$('" + sid + "').removeClass('highlight')", 2000);
     e.preventDefault();
 }
