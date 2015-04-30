@@ -1,7 +1,7 @@
 var initArticle = 93, currentArticle, pond = new Object();
 var sliderValues = [17, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
-var articleOpened = 0;
+var articleOpened = 1;
 
 function loadContent(article) {
     $.get("content", {"article": article}, function (data, status, xhr) {
@@ -40,6 +40,7 @@ function catchFish(article) {
     $.get("catchfish", {"article": article, "sliders": sliderValues},
         function (data, status, xhr) {
             pond_showResult(data.result);
+            console.log("*** new fishes ***", new Date());
             var n = data.result.length;
             for (var i = 0; i < n; i++)
                 if (i < 7 || i == n - 1)
@@ -49,8 +50,6 @@ function catchFish(article) {
 }
 
 function openArticle(article, isStated) {
-    if (!isStated)
-        window.history.pushState(getCurrentState());
     currentArticle = article;
     if (!isStated)
         articleOpened++;
@@ -58,6 +57,7 @@ function openArticle(article, isStated) {
     catchFish(currentArticle);
     if (!isStated)
         window.history.pushState(getCurrentState());
+    updateBackButtonHint();
 }
 
 function windowPopStateHandler(e) {
@@ -65,13 +65,11 @@ function windowPopStateHandler(e) {
     sliderValues = state.sliderValues;
     openArticle(state.article, true);
     updateSlider();
-    updateBackForwardButton(state.i > 1, state.i < articleOpened);
 }
 
-function updateBackForwardButton(sb, sf) {
-    //$("#goback").css("visibility", sb ? "visible" : "hidden");
-    //$("#gofwd").css("visibility", sf ? "visible" : "hidden");
-    $("#navcontrol em").css("visibility", "visible");
+function updateBackButtonHint() {
+    if (articleOpened == 2)
+        $("#navcontrol em").css("visibility", "visible");
 }
 
 function fishClicked() {
@@ -80,7 +78,6 @@ function fishClicked() {
 
     openArticle(article);
     fishMouseOut();
-    updateBackForwardButton(articleOpened > 1, false);
 }
 
 function fishMouseOver() {
@@ -127,7 +124,7 @@ function previewReadClicked(e) {
     openArticle($("#preview").modal("hide").data("article"));
 }
 
-function changeSlider(d, value) {
+function setSlider(d, value) {
     sliderValues[d] = value;
     catchFish(currentArticle);
 }
@@ -140,17 +137,23 @@ function updateSlider() {
     });
 }
 
-function sliderSlide(e, ui) {
+function sliderSlided(e, ui) {
     var slider = $(this);
     var d = parseInt(slider.data("dim"));
     var v = ui.value;
     slider.parent().find(".slidervalue").text(v);
-    changeSlider(d, v);
+    setSlider(d, v);
+}
+
+function sliderChanged(e, ui) {
+    window.history.replaceState(getCurrentState());
 }
 
 function getCurrentState() {
-    return {"i": articleOpened, "article": currentArticle,
+    var state = {"article": currentArticle,
         "sliderValues": sliderValues.slice()}
+    console.log("getCurrentState", state);
+    return state;
 }
 
 function handleArticleLinks() {
@@ -162,13 +165,16 @@ function articleLinkClicked(e) {
     var url = $(this).attr("href");
     $.get("find-article", {"url": url}, function (data, status, xhr) {
         openArticle(data.article);
+    }).fail(function () {
+        alert("Cannot open this article. It is not provided in this demo.");
     });
 }
 
 $(document).ready(function () {
     $(".slider").each(function (index, obj) {
         var sliderID = $(obj).data("dim");
-        $(obj).slider({ min: 1, max: 20, value: sliderValues[sliderID], slide: sliderSlide });
+        $(obj).slider({ min: 1, max: 20, value: sliderValues[sliderID],
+            slide: sliderSlided, change: sliderChanged });
     });
     $("#preview").modal();
     $("#previewread").click(previewReadClicked);
