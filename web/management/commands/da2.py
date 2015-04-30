@@ -84,8 +84,8 @@ class Command(BaseCommand):
                 aa.media = md.media
                 aa.care = md.care
                 aa.reading = md.reading
-                aa.is_local = article.source in ("BHC")
-                aa.is_video = article.source in ("BHCYT")
+                aa.is_local = article.source in {"BHC"}
+                aa.is_video = article.source in {"BHCYT"}
                 aa.color = self.choose_color(article)
                 aa.save()
 
