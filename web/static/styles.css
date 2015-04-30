@@ -126,11 +126,12 @@
 
 #topbutton {
     position: fixed;
-    top: 1px;
+    top: -35px;
     width: 75px;
     margin-left: -75px;
     left: 50%;
     font-size: 12px;
     text-align: center;
     display: none;
+    padding: 5px;
 }

@@ -31,7 +31,7 @@ function loadContent(article) {
 function jumpSection(e) {
     var section = $(this).data("section");
     var sid = "#s" + section
-    $(sid).addClass("highlight").ScrollTo({"offsetTop": 50});
+    $(sid).addClass("highlight").ScrollTo({"offsetTop": 35});
     setTimeout("$('" + sid + "').removeClass('highlight')", 2000);
     e.preventDefault();
 }
@@ -177,9 +177,9 @@ $(document).ready(function () {
     // Scrolling.
     $(window).on("scroll", function () {
         if ($(window).scrollTop() > 0)
-            $("#topbutton:not(:visible)").slideDown();
+            $("#topbutton:not(:visible)").animate({top: 1}, {"start": function () { $(this).show(); }});
         else
-            $("#topbutton:visible").slideUp();
+            $("#topbutton:visible").animate({top: -35}, {"done": function () { $(this).hide(); }});
     });
     $("#topbutton a").click(function (e) {
         e.preventDefault();
