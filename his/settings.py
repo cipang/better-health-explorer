@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+IS_SERVER = os.path.exists("/home/ubuntu")
 
 
 # Quick-start development settings - unsuitable for production
@@ -20,9 +21,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'z-rx_5l*1y+bj0)^6gn=xri49p-#c^wa0na@z7d8)68bg@^h4b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not IS_SERVER
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ["*"]
 
@@ -61,7 +62,8 @@ WSGI_APPLICATION = 'his.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': "/Users/patrick/Documents/Health/hisdb.sqlite3",
+        'NAME': "/Users/patrick/Documents/Health/hisdb.sqlite3" if not IS_SERVER else \
+            "/home/ubuntu/hisdb.sqlite3",
     }
 }
 
@@ -82,6 +84,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/' if not IS_SERVER else \
+    'http://ifishtest.s3-website-ap-southeast-2.amazonaws.com/static/'
 
 STATIC_ROOT = '/Users/patrick/Desktop/tmp_static'
