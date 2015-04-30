@@ -70,7 +70,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Macau'
+TIME_ZONE = 'Australia/Melbourne'
 
 USE_I18N = True
 
