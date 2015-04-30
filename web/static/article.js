@@ -170,6 +170,20 @@ function articleLinkClicked(e) {
     });
 }
 
+function statusAnimate(selector, isShow) {
+    var filter, options, css;
+    if (isShow) {
+        filter = ":not(:visible)";
+        options = {"start": function () { $(this).show(); }};
+        css = {"top": 1};
+    } else {
+        filter = ":visible";
+        options = {"done": function () { $(this).hide(); }};
+        css = {"top": -35};
+    }
+    $(selector).filter(".status").filter(filter).animate(css, options);
+}
+
 $(document).ready(function () {
     $(".slider").each(function (index, obj) {
         var sliderID = $(obj).data("dim");
@@ -183,13 +197,23 @@ $(document).ready(function () {
     // Scrolling.
     $(window).on("scroll", function () {
         if ($(window).scrollTop() > 0)
-            $("#topbutton:not(:visible)").animate({top: 1}, {"start": function () { $(this).show(); }});
+            statusAnimate("#topbutton", true);
         else
-            $("#topbutton:visible").animate({top: -35}, {"done": function () { $(this).hide(); }});
+            statusAnimate("#topbutton", false);
     });
     $("#topbutton a").click(function (e) {
         e.preventDefault();
         $("body").ScrollTo();
+    });
+
+    // AJAX status.
+    var lastLoadTimeout = 0;
+    $(document).ajaxStart(function () {
+        lastLoadTimeout = setTimeout('statusAnimate("#ajaxloading", true)', 500);
+    });
+    $(document).ajaxStop(function () {
+        clearTimeout(lastLoadTimeout);
+        statusAnimate("#ajaxloading", false);
     });
 
     openArticle(initArticle, true);

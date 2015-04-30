@@ -125,11 +125,20 @@
 .bhc-youtube-summary { display: none; }
 
 #topbutton {
-    position: fixed;
-    top: -35px;
     width: 75px;
     margin-left: -75px;
     left: 50%;
+}
+
+#ajaxloading {
+    width: 80px;
+    margin-left: -80px;
+    left: 60%;
+}
+
+.alert.status {
+    position: fixed;
+    top: -35px;
     font-size: 12px;
     text-align: center;
     display: none;
