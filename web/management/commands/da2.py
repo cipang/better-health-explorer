@@ -84,7 +84,7 @@ class Command(BaseCommand):
                 aa.media = md.media
                 aa.care = md.care
                 aa.reading = md.reading
-                aa.is_local = article.source in {"BHC"}
+                aa.is_local = article.source in {"BHC", "BHCYT"}
                 aa.is_video = article.source in {"BHCYT"}
                 aa.color = self.choose_color(article)
                 aa.save()
@@ -117,7 +117,7 @@ class Command(BaseCommand):
 
             # Compute number of images and videos.
             md.orig_image_count = article.image_set.count()
-            md.orig_video_count = 1 if article.source in ("BHCYT") else 0
+            md.orig_video_count = 1 if article.source in {"BHCYT"} else 0
 
             # Compute length.
             content = self.get_article_text(article)
