@@ -121,7 +121,7 @@ def catch_fish(request):
                          key=lambda x: x[1],
                          reverse=True)
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
-    all_results = all_results[0:55]
+    all_results = all_results
 
     tier0, tier1, tier2 = list(), list(), list()
     last_score = None
@@ -162,6 +162,9 @@ def catch_fish(request):
 
         order += 1
         last_score = score
+        limit = 72 if len(tier0) == 3 else 57
+        if order >= limit:
+            break
 
     result = tier0 + tier1 + tier2
     return JsonResponse({"result": result})

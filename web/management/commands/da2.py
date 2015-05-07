@@ -53,10 +53,10 @@ class Command(BaseCommand):
     )
 
     _colors = {
-        "conditions and treatments": "#e5f7fc",
-        "healthy living": "#ecede0",
-        "relationships and family": "#f2ebe8",
-        "services and support": "#f5e7b6",
+        "conditions and treatments": "#add8e6",
+        "healthy living": "#98fb98",
+        "relationships and family": "#ffc0cb",
+        "services and support": "#ffe4b5",
         "": ""
     }
 

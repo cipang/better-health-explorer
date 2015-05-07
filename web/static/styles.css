@@ -19,7 +19,7 @@
 #pond {
     position: relative;
     width: 385px;
-    height: 385px;
+    height: 370px;
     background-color: #fff;
     border: 1px solid #aaa;
 }
@@ -52,13 +52,14 @@
 }*/
 
 .pondtitle {
-    padding: 0.5em 1em 1em 1em;
+    padding: 0.5em 1em;
     font-weight: bold;
     text-align: center;
 }
 
 #navcontrol {
     font-size: 12px;
+    text-align: center;
 }
 
 #goback, #gofwd {
@@ -144,3 +145,23 @@
     display: none;
     padding: 5px;
 }
+
+#legend {
+    font-size: 12px;
+    text-align: center;
+    padding-bottom: 1em;
+}
+
+#legend .box {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    margin: 0 5px -3px 5px;
+}
+
+#legend .a { background-color: #add8e6; }
+#legend .b { background-color: #98fb98; }
+#legend .c { background-color: #ffc0cb; }
+#legend .d { background-color: #ffe4b5; }
+#legend .w { background-color: #fff; }
