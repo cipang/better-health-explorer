@@ -42,11 +42,11 @@ function catchFish(article) {
             "checkboxes": checkboxValues},
         function (data, status, xhr) {
             pond_showResult(data.result);
-            console.log("*** new fishes ***", new Date());
-            var n = data.result.length;
-            for (var i = 0; i < n; i++)
-                if (i < 7 || i == n - 1)
-                    console.log("fish" + i, data.result[i].title, data.result[i].score);
+            // console.log("*** new fishes ***", new Date());
+            // var n = data.result.length;
+            // for (var i = 0; i < n; i++)
+            //     if (i < 7 || i == n - 1)
+            //         console.log("fish" + i, data.result[i].title, data.result[i].score);
         }
     );
 }
@@ -218,8 +218,30 @@ function statusAnimate(selector, isShow) {
 
 $(document).ready(function () {
     // Sliders.
-    $(".slider").slider({ min: 1, max: 20, value: 1,
+    var $slider = $(".slider");
+    $slider.slider({ min: 1, max: 20, value: 1, range: "min",
         slide: sliderSlided, change: sliderChanged });
+
+    // Slider: Handle move one step when click on the bar.
+    var clickOnBar = false;
+    $slider.on("slidestart", function (event, ui) {
+        if (!clickOnBar) {
+            $(this).slider("value", ui.value + 1);
+            sliderSlided.call($(this), null, {"value": ui.value + 1});
+            return false;
+        } else {
+            clickOnBar = false;
+        }
+    });
+    $(".slider .ui-slider-range").mousedown(function () {
+        var slider = $(this).parent();
+        var v = slider.slider("value") - 1;
+        slider.slider("value", v);
+        sliderSlided.call(slider, null, {"value": v});
+        return false;
+    });
+    $(".slider .ui-slider-handle").mousedown(function () { clickOnBar = true; });
+    $(".slider").css("background", $(".slider .ui-slider-range").css("background"));
 
     // Checkboxes.
     $(".dim-checkbox").change(checkboxChanged);
