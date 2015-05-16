@@ -1,5 +1,6 @@
-var initArticle = 93, currentArticle, pond = new Object();
-var sliderValues = [17, 10, 10, 10];
+var initArticle = 93, currentArticle, inited = false;
+var checkboxValues = [true, true, true, true];
+var sliderValues = [19, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
 var articleOpened = 1;
 
@@ -37,7 +38,8 @@ function jumpSection(e) {
 }
 
 function catchFish(article) {
-    $.get("catchfish", {"article": article, "sliders": sliderValues},
+    $.get("catchfish", {"article": article, "sliders": sliderValues,
+            "checkboxes": checkboxValues},
         function (data, status, xhr) {
             pond_showResult(data.result);
             console.log("*** new fishes ***", new Date());
@@ -62,9 +64,10 @@ function openArticle(article, isStated) {
 
 function windowPopStateHandler(e) {
     var state = e.originalEvent.state;
+    checkboxValues = state.checkboxValues;
     sliderValues = state.sliderValues;
     openArticle(state.article, true);
-    updateSlider();
+    updateUI();
 }
 
 function updateBackButtonHint() {
@@ -129,11 +132,24 @@ function setSlider(d, value) {
     catchFish(currentArticle);
 }
 
-function updateSlider() {
+function setCheckbox(d, value) {
+    checkboxValues[d] = value;
+    catchFish(currentArticle);
+}
+
+function updateUI() {
+    $(".dim-checkbox").each(function (index, obj) {
+        var cbID = $(obj).data("dim");
+        var v = checkboxValues[cbID];
+        $(obj).prop("checked", v);
+    });
     $(".slider").each(function (index, obj) {
         var sliderID = $(obj).data("dim");
         var v = sliderValues[sliderID];
-        $(obj).slider("value", v).parent().find(".slidervalue").text(v);
+        var cbv = checkboxValues[sliderID];
+        var slider = $(obj);
+        slider.slider("value", v).parent().find(".slidervalue").text(v);
+        slider.slider(cbv ? "enable" : "disable");
     });
 }
 
@@ -146,11 +162,27 @@ function sliderSlided(e, ui) {
 }
 
 function sliderChanged(e, ui) {
+    if (inited)
+        window.history.replaceState(getCurrentState());
+}
+
+function checkboxChanged(e, ui) {
+    if (!inited)
+        return;
+
+    var cb = $(this);
+    var d = parseInt(cb.data("dim"));
+    var v = cb.prop("checked");
+    var slider = $(".slider[data-dim=" + d + "]");
+    slider.slider(v ? "enable" : "disable");
+
+    setCheckbox(d, v);
     window.history.replaceState(getCurrentState());
 }
 
 function getCurrentState() {
     var state = {"article": currentArticle,
+        "checkboxValues": checkboxValues.slice(),
         "sliderValues": sliderValues.slice()}
     console.log("getCurrentState", state);
     return state;
@@ -185,13 +217,15 @@ function statusAnimate(selector, isShow) {
 }
 
 $(document).ready(function () {
-    $(".slider").each(function (index, obj) {
-        var sliderID = $(obj).data("dim");
-        $(obj).slider({ min: 1, max: 20, value: sliderValues[sliderID],
-            slide: sliderSlided, change: sliderChanged });
-    });
-    $("#preview").modal();
-    $("#previewread").click(previewReadClicked);
+    // Sliders.
+    $(".slider").slider({ min: 1, max: 20, value: 1,
+        slide: sliderSlided, change: sliderChanged });
+
+    // Checkboxes.
+    $(".dim-checkbox").change(checkboxChanged);
+    updateUI();
+
+    // History and states.
     $(window).on("popstate", windowPopStateHandler);
 
     // Scrolling.
@@ -216,6 +250,7 @@ $(document).ready(function () {
         statusAnimate("#ajaxloading", false);
     });
 
+    inited = true;
     openArticle(initArticle, true);
     window.history.replaceState(getCurrentState());
 });

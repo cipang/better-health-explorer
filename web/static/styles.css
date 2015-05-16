@@ -11,10 +11,11 @@
     width: 400px;
     padding: 10px;
     background-color: #eee;
+    height: 100%;
 }
 
 #panel h1 { font-size: 16px; margin: 15px 0; }
-#panel h2 { font-size: 14px; margin: 1.2em 0; font-style: italic; font-weight: bold; }
+#panel h2 { font-size: 14px; margin: 1em 0; font-style: italic; font-weight: normal; }
 
 #pond {
     position: relative;
@@ -90,7 +91,7 @@
 #sliders { margin-top: 1em; }
 
 .slider {
-    margin: 5px 10px;
+    margin: 5px 10px 5px 20px;
 }
 
 #summary {
@@ -107,7 +108,7 @@
 }
 
 #toc:before {
-    content: "Table of Content";
+    content: "Table of Contents";
     font-weight: bold;
 }
 
@@ -165,3 +166,16 @@
 #legend .c { background-color: #ffc0cb; }
 #legend .d { background-color: #ffe4b5; }
 #legend .w { background-color: #fff; }
+
+.dimension .enabled {
+    width: 20px;
+    float: left;
+}
+
+.dimension .lbl {
+    font-weight: bold;
+    font-size: 12px;
+    padding-top: 3px;
+}
+
+.dimension em.small { display: none; }

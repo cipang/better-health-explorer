@@ -70,7 +70,7 @@ def _dot_product(v1, v2):
     return sum(map(operator.mul, v1, v2))
 
 
-def article_match_with_silders(current, sliders):
+def article_match_with_silders(current, sliders, checkboxes):
     # a = sliders
     # qs = ArticleAttr.objects.select_related("article").\
     #     exclude(article__id=current)
@@ -84,7 +84,8 @@ def article_match_with_silders(current, sliders):
 
     # First use similarity to filter, then compute score within the result pool.
     sim = sliders[0]
-    a = sliders  # + [randint(1, 10)]
+    #a = sliders  # + [randint(1, 10)]
+    a = [x[1] for x in zip(checkboxes, sliders) if x[0]]
     qs = ArticleAttr.objects.select_related("article").\
         exclude(article__id=current)
     pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
@@ -92,7 +93,8 @@ def article_match_with_silders(current, sliders):
     for t in pool[0:100]:
         attr = t[0]
         # b = (attr.media, attr.care, attr.reading, randint(1, 10))
-        b = (t[1], attr.media, attr.care, attr.reading)
+        v = (t[1], attr.media, attr.care, attr.reading)
+        b = [x[1] for x in zip(checkboxes, v) if x[0]]
         score = _cosine_similarity(a, b)
         yield (attr, score, t[1])
 
@@ -115,9 +117,11 @@ def _get_sim(a, b):
 def catch_fish(request):
     article_id = int(request.GET.get("article"))
     sliders = list(map(int, request.GET.getlist("sliders[]")))
-    assert len(sliders)
+    checkboxes = list(map(lambda x: x.lower() == "true",
+        request.GET.getlist("checkboxes[]")))
+    assert len(sliders) and len(checkboxes) == len(sliders) and checkboxes[0]
 
-    all_results = sorted(article_match_with_silders(article_id, sliders),
+    all_results = sorted(article_match_with_silders(article_id, sliders, checkboxes),
                          key=lambda x: x[1],
                          reverse=True)
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
