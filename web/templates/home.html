@@ -16,6 +16,7 @@
     <!--script src="{% static 'hifish.js' %}"></script-->
     <script src="{% static 'd3_hifish.js' %}"></script>
     <script src="{% static 'article.js' %}"></script>
+    <link href="http://fonts.googleapis.com/css?family=Bitter" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -39,15 +40,20 @@
         <div id="pond">
             <div class="fish" id="current">CENTER</div>
         </div-->
-        <div class="pondtitle">Explore &quot;<span id="current">X</span>&quot;...</div>
 
-        <div id="legend">
-            <span class="box a"></span>Conditions and Treatments
-            <span class="box b"></span>Healthy Living<br>
-            <span class="box c"></span>Relationships and Family
-            <span class="box d"></span>Services and Support
-            <span class="box w"></span>Video
+        <div id="top">
+            <div class="pondtitle">Explore &quot;<span id="current">X</span>&quot;...</div>
+
+            <div id="legend">
+                <span class="box a"></span>Conditions and Treatments
+                <span class="box b"></span>Healthy Living<br>
+                <span class="box c"></span>Relationships and Family
+                <span class="box d"></span>Services and Support
+                <span class="box w"></span>Video
+            </div>
         </div>
+
+        <div class="colorblock"></div>
 
         <svg id="pond"></svg>
 

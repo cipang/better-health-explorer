@@ -86,7 +86,7 @@ function pond_computeTrack(order) {
 }
 
 function fish_getDelay(fish) {
-    return fish.order * 20;
+    return fish.order * 10;
 }
 
 function fish_getOpacity(fish) {

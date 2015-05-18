@@ -1,28 +1,36 @@
 #main {
     padding: 10px;
-    margin-right: 400px;
-    color: #868a08;
+    margin-right: 410px;
+    /*color: #868a08;*/
 }
+
+#main h1 { color: #b3000c; }
+#main h2 { font-size: 24px; border-bottom: 1px solid #aaa; padding-bottom: 0.25em; }
+#main h3 { font-size: 20px; text-transform: uppercase; }
 
 #panel {
     position: fixed;
     right: 0;
     top: 0;
-    width: 400px;
-    padding: 10px;
-    background-color: #eee;
+    width: 402px;
+    background-color: #80b807;
     height: 100%;
+    border-left: 1px solid #ccc;
+    box-shadow: -5px 0 25px #ccc;
 }
 
-#panel h1 { font-size: 16px; margin: 15px 0; }
+#panel h1 { font-size: 18px; }
 #panel h2 { font-size: 14px; margin: 1em 0; font-style: italic; font-weight: normal; }
+#panel #top { background-color: #bfd575; }
+#panel .colorblock { height: 0.5em; }
 
 #pond {
     position: relative;
-    width: 385px;
-    height: 370px;
+    width: 100%;
+    height: 390px;
     background-color: #fff;
-    border: 1px solid #aaa;
+    /*border: 1px solid #aaa;*/
+    padding: 10px;
 }
 
 /*#pond .fish {
@@ -53,9 +61,11 @@
 }*/
 
 .pondtitle {
-    padding: 0.5em 1em;
-    font-weight: bold;
-    text-align: center;
+    padding: 0.5em;
+    background-color: #285c00;
+    font-family: "Bitter", serif;
+    font-size: 18px;
+    color: #fff;
 }
 
 #navcontrol {
@@ -88,14 +98,17 @@
     font-size: 16px;
 }
 
-#sliders { margin-top: 1em; }
+#sliders {
+    padding: 1px 10px 10px;
+    background-color: #bfd575;
+}
 
 .slider {
     margin: 5px 10px 5px 20px;
 }
 
 #summary {
-    background-color: #eee;
+    background-color: #e6f07c;
     padding: 1em;
     border-radius: 5px;
     margin-bottom: 1em;
@@ -103,13 +116,13 @@
 
 #toc {
     font-size: 12px;
-    color: #aaa;
+    color: #888;
     margin: 2em 0;
 }
 
 #toc:before {
     content: "Table of Contents";
-    font-weight: bold;
+    font-weight: 400;
 }
 
 .sheader {
@@ -150,14 +163,14 @@
 #legend {
     font-size: 12px;
     text-align: center;
-    padding-bottom: 1em;
+    padding: 0.5em 0;
 }
 
 #legend .box {
     width: 15px;
     height: 15px;
     display: inline-block;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
     margin: 0 5px -3px 5px;
 }
 
