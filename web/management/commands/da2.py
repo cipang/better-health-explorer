@@ -57,7 +57,7 @@ class Command(BaseCommand):
         "healthy living": "#98fb98",
         "relationships and family": "#ffc0cb",
         "services and support": "#ffe4b5",
-        "": ""
+        "": "#da70d6"
     }
 
     def handle(self, *args, **options):

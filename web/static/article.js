@@ -240,7 +240,7 @@ $(document).ready(function () {
         sliderSlided.call(slider, null, {"value": v});
         return false;
     });
-    $(".slider .ui-slider-handle").mousedown(function () { clickOnBar = true; });
+    $(".slider .ui-slider-handle").mousedown(function () { clickOnBar = true; }).unbind("keydown");
     $(".slider").css("background", $(".slider .ui-slider-range").css("background"));
 
     // Checkboxes.

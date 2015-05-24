@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>hiFISH</title>
+    <title>Better Health Explorer</title>
 
     {% load staticfiles %}
     <script src="{% static 'jquery-1.11.2.min.js' %}"></script>
@@ -49,7 +49,7 @@
                 <span class="box b"></span>Healthy Living<br>
                 <span class="box c"></span>Relationships and Family
                 <span class="box d"></span>Services and Support
-                <span class="box w"></span>Video
+                <span class="box e"></span>Video
             </div>
         </div>
 
@@ -83,7 +83,7 @@
                 <div class="slider" data-dim="0"></div>
             </div>
 
-            <h2>I want the articles that are:</h2>
+            <h2>and:</h2>
 
             <div class="dimension">
                 <div class="enabled"><input type="checkbox" class="dim-checkbox" data-dim="1" checked="checked"></div>
@@ -113,13 +113,15 @@
             </div>
         </div>
 
-        <div class="alert alert-warning status" id="topbutton">
-            <a href="#" class="alert-link">&#x21e7; Top</a>
-        </div>
+        <div class="footer">Better Health Explorer</div>
+    </div>
 
-        <div class="alert alert-danger status" id="ajaxloading">
-            Loading...
-        </div>
+    <div class="alert alert-warning status" id="topbutton">
+        <a href="#" class="alert-link">&#x21e7; Top</a>
+    </div>
+
+    <div class="alert alert-danger status" id="ajaxloading">
+        Loading...
     </div>
 </body>
 </html>
