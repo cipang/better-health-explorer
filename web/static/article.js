@@ -4,7 +4,7 @@ var sliderValues = [19, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
 var articleOpened = 1;
 
-function loadContent(article) {
+function loadContent(article, isStated) {
     $.get("content", {"article": article}, function (data, status, xhr) {
         $("#current, #pagetitle").html(data.title);
         $("#acontent").empty();
@@ -24,6 +24,8 @@ function loadContent(article) {
             $("<div>").html(data.content).insertAfter("#summary");
         }
         handleArticleLinks();
+        if (!isStated || articleOpened == 1)
+            breadcrumbAdd(article, data);
         if ($(window).scrollTop() != 0)
             $("body").ScrollTo();
     });
@@ -52,10 +54,12 @@ function catchFish(article) {
 }
 
 function openArticle(article, isStated) {
+    if (currentArticle == article)
+        return;
     currentArticle = article;
     if (!isStated)
         articleOpened++;
-    loadContent(currentArticle);
+    loadContent(currentArticle, isStated);
     catchFish(currentArticle);
     if (!isStated)
         window.history.pushState(getCurrentState());
@@ -63,7 +67,10 @@ function openArticle(article, isStated) {
 }
 
 function windowPopStateHandler(e) {
-    var state = e.originalEvent.state;
+    openState(e.originalEvent.state);
+}
+
+function openState(state) {
     checkboxValues = state.checkboxValues;
     sliderValues = state.sliderValues;
     openArticle(state.article, true);
@@ -200,6 +207,22 @@ function articleLinkClicked(e) {
     }).fail(function () {
         alert("Cannot open this article. It is not provided in this demo.");
     });
+}
+
+function breadcrumbAdd(id, article) {
+    var last = $("#navcontrol li").last().find("a");
+    if (last.length && last.data("article") == id)
+        return;
+    var a = $("<a>").data("article", id).attr("title", article.title).
+        attr("href", "#").text(article.title).click(breadcrumbClick);
+    var li = $("<li>").addClass("bc").append(a);
+    li.appendTo("#navcontrol");
+    $("<li>").addClass("arrow").text("\u279c").appendTo("#navcontrol");
+}
+
+function breadcrumbClick(e) {
+    e.preventDefault();
+    openArticle($(this).data("article"));
 }
 
 function statusAnimate(selector, isShow) {

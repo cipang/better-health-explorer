@@ -73,7 +73,26 @@
 
 #navcontrol {
     font-size: 12px;
-    text-align: center;
+    margin: 0px;
+    padding: 3px 10px;
+}
+
+#navcontrol li {
+    list-style-type: none;
+    float: left;
+    max-width: 175px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#navcontrol li.arrow {
+    padding: 0 5px;
+}
+
+#navcontrol li a {
+    color: #333;
+    text-decoration: underline;
 }
 
 #goback, #gofwd {
