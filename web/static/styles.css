@@ -66,6 +66,9 @@
     font-family: "Bitter", serif;
     font-size: 18px;
     color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #navcontrol {
