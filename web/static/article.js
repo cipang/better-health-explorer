@@ -2,11 +2,12 @@ var initArticle = 93, currentArticle, inited = false;
 var checkboxValues = [true, true, true, true];
 var sliderValues = [19, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
+var clickedFish = false;
 var articleOpened = 1;
 
 function loadContent(article, isStated) {
     $.get("content", {"article": article}, function (data, status, xhr) {
-        $("#current, #pagetitle").html(data.title);
+        $("#pagetitle").html(data.title);
         $("#acontent").empty();
         $("<div>").attr("id", "summary").html(data.summary).appendTo("#acontent");
         if (data.sections.length) {
@@ -28,6 +29,25 @@ function loadContent(article, isStated) {
             breadcrumbAdd(article, data);
         if ($(window).scrollTop() != 0)
             $("body").ScrollTo();
+
+        // Animations.
+        if (clickedFish) {
+            var offset = $("#current").offset();
+            $("#current-fish").show().animate(
+                {
+                    "left": offset.left,
+                    "top": offset.top,
+                    "width": 10,
+                    "height": 10
+                },
+                "slow",
+                "linear",
+                function () {
+                    $("#current-fish").hide();
+                    $("#current").html(data.title);
+                }
+            );
+        }
     });
 }
 
@@ -62,7 +82,7 @@ function openArticle(article, isStated) {
     loadContent(currentArticle, isStated);
     catchFish(currentArticle);
     if (!isStated)
-        window.history.pushState(getCurrentState());
+        window.history.pushState(getCurrentState(), document.title);
     updateBackButtonHint();
 }
 
@@ -85,6 +105,13 @@ function updateBackButtonHint() {
 function fishClicked() {
     var $obj = $(this);
     var article = $obj.data("article") || $obj.parent().data("article");
+
+    clickedFish = true;
+    var offset = $obj.offset();
+    var w = $obj.outerWidth() || 120;
+    var h = $obj.outerHeight() || 50;
+    $("#current-fish").css("width", w + "px").css("height", h + "px").
+        css("left", offset.left + "px").css("top", offset.top + "px");
 
     openArticle(article);
     fishMouseOut();
@@ -170,7 +197,7 @@ function sliderSlided(e, ui) {
 
 function sliderChanged(e, ui) {
     if (inited)
-        window.history.replaceState(getCurrentState());
+        window.history.replaceState(getCurrentState(), document.title);
 }
 
 function checkboxChanged(e, ui) {
@@ -184,7 +211,7 @@ function checkboxChanged(e, ui) {
     slider.slider(v ? "enable" : "disable");
 
     setCheckbox(d, v);
-    window.history.replaceState(getCurrentState());
+    window.history.replaceState(getCurrentState(), document.title);
 }
 
 function getCurrentState() {
@@ -297,5 +324,5 @@ $(document).ready(function () {
 
     inited = true;
     openArticle(initArticle, true);
-    window.history.replaceState(getCurrentState());
+    window.history.replaceState(getCurrentState(), document.title);
 });
