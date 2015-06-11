@@ -7,6 +7,7 @@ var articleOpened = 1;
 
 function loadContent(article, isStated) {
     $.get("content", {"article": article}, function (data, status, xhr) {
+        $("#main").hide().css("opacity", "0").css("margin-left", "-10px");
         $("#pagetitle").html(data.title);
         $("#acontent").empty();
         $("<div>").attr("id", "summary").html(data.summary).appendTo("#acontent");
@@ -31,7 +32,14 @@ function loadContent(article, isStated) {
             $("body").ScrollTo();
 
         // Animations.
+        $("#main").show().animate({"margin-left": 0, "opacity": 1},
+            "slow");
+        var callbackCleanup = function () {
+            $("#current-fish").hide();
+            $("#current").html(data.title);
+        };
         if (clickedFish) {
+            clickedFish = false;
             var offset = $("#current").offset();
             $("#current-fish").show().animate(
                 {
@@ -42,11 +50,10 @@ function loadContent(article, isStated) {
                 },
                 "slow",
                 "linear",
-                function () {
-                    $("#current-fish").hide();
-                    $("#current").html(data.title);
-                }
+                callbackCleanup
             );
+        } else {
+            callbackCleanup();
         }
     });
 }
