@@ -122,6 +122,17 @@ function fishClicked() {
 
     openArticle(article);
     fishMouseOut();
+    if (sliderValues[0] < 19) {
+        sliderValues[0] = 19;
+        var val, animateSlider = function () {
+            var slider = $(".slider:first");
+            if ((val = slider.slider("value")) != 19) {
+                slider.slider("value", val + 1);
+                setTimeout(animateSlider, 100);
+            }
+        };
+        animateSlider();
+    }
 }
 
 function fishMouseOver() {
