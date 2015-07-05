@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import Http404, JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from extract.models import Article
 from web.models import *
@@ -27,9 +28,14 @@ class FishRect(Rectangle):
 
 
 def home(request):
-    return render(request, "home.html",
+    return HttpResponseRedirect(reverse("article", args=(93,)))
+
+
+def article(request, pk):
+    return render(request, "article.html",
                   {"loop": range(0, 20),
-                   "slider": range(1, 21)})
+                   "slider": range(1, 21),
+                   "pk": pk})
 
 
 def content(request):

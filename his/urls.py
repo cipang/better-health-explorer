@@ -8,6 +8,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'web.views.home', name='home'),
+    url(r'^article/(?P<pk>[0-9]+)$', 'web.views.article', name='article'),
     url(r'^content$', 'web.views.content'),
     url(r'^summary$', 'web.views.summary'),
     url(r'^catchfish$', 'web.views.catch_fish'),

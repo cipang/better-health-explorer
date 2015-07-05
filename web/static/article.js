@@ -1,4 +1,4 @@
-var initArticle = 93, currentArticle, inited = false;
+var currentArticle, inited = false;
 var checkboxValues = [true, true, true, true];
 var sliderValues = [19, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
@@ -6,7 +6,7 @@ var clickedFish = false;
 var articleOpened = 1;
 
 function loadContent(article, isStated) {
-    $.get("content", {"article": article}, function (data, status, xhr) {
+    $.get("/content", {"article": article}, function (data, status, xhr) {
         $("#main").hide().css("opacity", "0").css("margin-left", "-10px");
         $("#pagetitle").html(data.title);
         $("#acontent").empty();
@@ -67,7 +67,7 @@ function jumpSection(e) {
 }
 
 function catchFish(article) {
-    $.get("catchfish", {"article": article, "sliders": sliderValues,
+    $.get("/catchfish", {"article": article, "sliders": sliderValues,
             "checkboxes": checkboxValues},
         function (data, status, xhr) {
             pond_showResult(data.result);
@@ -89,7 +89,7 @@ function openArticle(article, isStated) {
     loadContent(currentArticle, isStated);
     catchFish(currentArticle);
     if (!isStated)
-        window.history.pushState(getCurrentState(), document.title);
+        window.history.pushState(getCurrentState(), document.title, "/article/" + article);
     updateBackButtonHint();
 }
 
@@ -154,7 +154,7 @@ function tooltipRun() {
         pop.find("#popsummary").text("");
         pop.css("left", x + "px").css("top", y + "px").fadeIn("fast");
 
-        $.get("summary", {"article": hoveredFish}, function (data, status, xhr) {
+        $.get("/summary", {"article": hoveredFish}, function (data, status, xhr) {
             var h1 = pop.find("h1").html(data.title).outerHeight(true);
             var h2 = pop.find("#popsummary").html(data.summary).outerHeight(true);
             pop.css("height", (30 + h1 + h2) + "px");
@@ -225,7 +225,6 @@ function getCurrentState() {
     var state = {"article": currentArticle,
         "checkboxValues": checkboxValues.slice(),
         "sliderValues": sliderValues.slice()}
-    console.log("getCurrentState", state);
     return state;
 }
 
@@ -236,7 +235,7 @@ function handleArticleLinks() {
 function articleLinkClicked(e) {
     e.preventDefault();
     var url = $(this).attr("href");
-    $.get("find-article", {"url": url}, function (data, status, xhr) {
+    $.get("/find-article", {"url": url}, function (data, status, xhr) {
         openArticle(data.article);
     }).fail(function () {
         alert("Cannot open this article. It is not provided in this demo.");
