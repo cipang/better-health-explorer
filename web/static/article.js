@@ -4,6 +4,7 @@ var sliderValues = [19, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
 var clickedFish = false;
 var articleOpened = 1;
+var historyCount = 0;
 
 function loadContent(article, isStated) {
     $.get("/content", {"article": article}, function (data, status, xhr) {
@@ -262,11 +263,40 @@ function breadcrumbAdd(id, article) {
     var li = $("<li>").addClass("bc").append(a);
     li.appendTo("#navcontrol");
     $("<li>").addClass("arrow").text("\u279c").appendTo("#navcontrol");
+    historyCount++;
+    if (historyCount > 4) {
+        $("#navcontrol li.bc:first").appendTo("#historylist");
+        if (historyCount > 5)
+            $("#navcontrol li.arrow:first").remove();
+        $("#history-count").html(historyCount - 4);
+        $("#historylist li.empty").remove();
+    }
 }
 
 function breadcrumbClick(e) {
     e.preventDefault();
     openArticle($(this).data("article"));
+    historyDismiss();
+}
+
+function historyClick(e) {
+    var sender = $(e.target);
+    var offset = sender.offset();
+    $("#historylist").css({
+        "left": offset.left + sender.outerWidth() - $("#historylist").width(),
+        "top": offset.top + sender.outerHeight() + 5
+    }).fadeIn("fast");
+}
+
+function historyDismiss(e) {
+    var history = $("#historylist");
+    if (!e) {
+        // Non-event callback.
+        history.fadeOut("fast");
+        return;
+    }
+    if (!history.is(e.target) && history.has(e.target).length === 0)
+        history.fadeOut("fast");
 }
 
 function statusAnimate(selector, isShow) {
@@ -339,6 +369,10 @@ $(document).ready(function () {
             panel.css("right", 0);
     });
     $(window).resize();
+
+    // History stuff.
+    $("#navcontrol li.clock").click(historyClick);
+    $(document).mouseup(historyDismiss);
 
     // AJAX status.
     var lastLoadTimeout = 0;

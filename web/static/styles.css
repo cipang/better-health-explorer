@@ -85,7 +85,7 @@ body {
 #navcontrol li {
     list-style-type: none;
     float: left;
-    max-width: 175px;
+    max-width: 155px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -95,10 +95,35 @@ body {
     padding: 0 5px;
 }
 
-#navcontrol li a {
+#navcontrol li a, #historylist li a {
     color: #333;
     text-decoration: underline;
 }
+
+#navcontrol li.clock { padding-right: 3px; cursor: pointer; }
+#navcontrol li.clock img { width: 18px; height: 18px; margin-right: 2px; }
+
+#historylist {
+    font-size: 12px;
+    z-index: 1100;
+    position: fixed;
+    border: 1px solid #444;
+    box-shadow: 0px 5px 20px #888;
+    background-color: #bfd575;
+    padding: 0;
+    display: none;
+}
+
+#historylist li {
+    max-width: 175px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.25em;
+    list-style-type: none;
+}
+
+#historylist li.empty { text-align: center; width: 150px; }
 
 #goback, #gofwd {
     visibility: hidden;
@@ -190,7 +215,7 @@ body {
 #legend {
     font-size: 12px;
     text-align: center;
-    padding: 0.5em 0;
+    padding: 0.25em 0;
 }
 
 #legend .box {

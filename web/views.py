@@ -230,7 +230,6 @@ def overlap_removal_test(request):
 
 def image_redirect(request, image):
     new_url = settings.STATIC_URL + "article-images/" + image
-    print(new_url)
     return HttpResponseRedirect(new_url)
 
 

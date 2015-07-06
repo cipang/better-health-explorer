@@ -44,25 +44,33 @@
         <div id="top">
             <div class="pondtitle">Explore &quot;<span id="current">X</span>&quot;...</div>
 
-            <div id="legend">
-                <span class="box a"></span>Conditions and Treatments
-                <span class="box b"></span>Healthy Living<br>
-                <span class="box c"></span>Relationships and Family
-                <span class="box d"></span>Services and Support
-                <span class="box e"></span>Video
-            </div>
+            <ul id="navcontrol" class="clearfix">
+                <li class="clock" title="History"><img src="{% static 'images/clock.png' %}" alt=""><span id="history-count"></span></li>
+            </ul>
+
+            <ol id="historylist">
+                <li class="empty">(Empty List)</li>
+            </ol>
         </div>
 
         <div class="colorblock"></div>
 
         <svg id="pond"></svg>
 
-        <ul id="navcontrol" class="clearfix">
-            <!--span class="pull-left" id="goback"><a href="javascript:window.history.back()">Go Back</a></span>
+        <div id="legend">
+            <span class="box a"></span>Conditions and Treatments
+            <span class="box b"></span>Healthy Living<br>
+            <span class="box c"></span>Relationships and Family
+            <span class="box d"></span>Services and Support
+            <span class="box e"></span>Video
+        </div>
+
+        <!--ul id="navcontrol" class="clearfix">
+            <span class="pull-left" id="goback"><a href="javascript:window.history.back()">Go Back</a></span>
             <span class="pull-right" id="gofwd"><a href="javascript:window.history.forward()">Go Forward</a></span>
             <br class="clearfix">
-            <em style="visibility: hidden;">Use browser's Back button to return.</em-->
-        </ul>
+            <em style="visibility: hidden;">Use browser's Back button to return.</em>
+        </ul-->
 
         <div id="sliders">
             <!--div class="dimension">
