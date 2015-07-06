@@ -6,25 +6,25 @@ from extract.models import Article
 from web.models import *
 from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
-from collections import namedtuple
+# from collections import namedtuple
 import math
 
 
-Point = namedtuple("Point", ["x", "y"])
-CENTER = Point(130, 160)
+# Point = namedtuple("Point", ["x", "y"])
+# CENTER = Point(130, 160)
 SLIDER_MIN = 1
 SLIDER_MAX = 20
-CENTER_DISTANCE_MIN = 100
+# CENTER_DISTANCE_MIN = 100
 ALL_SIM = None
 
 
-class FishRect(Rectangle):
+# class FishRect(Rectangle):
 
-    """Displayed rectangle of each fish. For overlap removal."""
+#     """Displayed rectangle of each fish. For overlap removal."""
 
-    def __init__(self, x, y, width, height, fish_id):
-        super(FishRect, self).__init__(x, y, width, height)
-        self.fish_id = fish_id
+#     def __init__(self, x, y, width, height, fish_id):
+#         super(FishRect, self).__init__(x, y, width, height)
+#         self.fish_id = fish_id
 
 
 def home(request):
@@ -76,7 +76,7 @@ def _dot_product(v1, v2):
     return sum(map(operator.mul, v1, v2))
 
 
-def article_match_with_silders(current, sliders, checkboxes):
+def article_match_with_silders(current, sliders, checkboxes, filters):
     # a = sliders
     # qs = ArticleAttr.objects.select_related("article").\
     #     exclude(article__id=current)
@@ -90,10 +90,20 @@ def article_match_with_silders(current, sliders, checkboxes):
 
     # First use similarity to filter, then compute score within the result pool.
     sim = sliders[0]
-    #a = sliders  # + [randint(1, 10)]
+    # a = sliders + [randint(1, 10)]
+
+    # Obtains the selected dimensions.
     a = [x[1] for x in zip(checkboxes, sliders) if x[0]]
+
+    # Obtains the article queryset.
     qs = ArticleAttr.objects.select_related("article").\
         exclude(article__id=current)
+
+    # Add filters if necessary.
+    if not all(filters):
+        # DO Something here.
+        pass
+
     pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
     pool.sort(key=lambda x: abs(x[1] - sim))
     for t in pool[0:100]:
@@ -123,15 +133,22 @@ def _get_sim(a, b):
 def catch_fish(request):
     article_id = int(request.GET.get("article"))
     sliders = list(map(int, request.GET.getlist("sliders[]")))
-    checkboxes = list(map(lambda x: x.lower() == "true",
-        request.GET.getlist("checkboxes[]")))
-    assert len(sliders) and len(checkboxes) == len(sliders) and checkboxes[0]
+    checkboxes = list(map(lambda x: x == "true",
+                          request.GET.getlist("checkboxes[]")))
+    filters = list(map(lambda x: x == "true",
+                       request.GET.getlist("filters[]")))
+    assert len(sliders) and len(checkboxes) == len(sliders) and \
+        checkboxes[0] and any(filters)
 
-    all_results = sorted(article_match_with_silders(article_id, sliders, checkboxes),
-                         key=lambda x: x[1],
-                         reverse=True)
+    all_results = article_match_with_silders(article_id,
+                                             sliders,
+                                             checkboxes,
+                                             filters)
+    # Sort result by the score.
+    all_results = sorted(all_results, key=lambda x: x[1], reverse=True)
+
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
-    all_results = all_results
+    # all_results = all_results
 
     tier0, tier1, tier2 = list(), list(), list()
     last_score = None

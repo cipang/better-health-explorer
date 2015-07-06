@@ -1,5 +1,6 @@
 var currentArticle, inited = false;
 var checkboxValues = [true, true, true, true];
+var filterValues = [true, true, true, true, true];
 var sliderValues = [19, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
 var clickedFish = false;
@@ -69,7 +70,7 @@ function jumpSection(e) {
 
 function catchFish(article) {
     $.get("/catchfish", {"article": article, "sliders": sliderValues,
-            "checkboxes": checkboxValues},
+            "checkboxes": checkboxValues, "filters": filterValues},
         function (data, status, xhr) {
             pond_showResult(data.result);
             // console.log("*** new fishes ***", new Date());
@@ -100,6 +101,7 @@ function windowPopStateHandler(e) {
 
 function openState(state) {
     checkboxValues = state.checkboxValues;
+    filterValues = state.filterValues;
     sliderValues = state.sliderValues;
     openArticle(state.article, true);
     updateUI();
@@ -190,10 +192,20 @@ function setCheckbox(d, value) {
     catchFish(currentArticle);
 }
 
+function setFilter(d, value) {
+    filterValues[d] = value;
+    catchFish(currentArticle);
+}
+
 function updateUI() {
     $(".dim-checkbox").each(function (index, obj) {
         var cbID = $(obj).data("dim");
         var v = checkboxValues[cbID];
+        $(obj).prop("checked", v);
+    });
+    $(".cat-checkbox").each(function (index, obj) {
+        var cbID = $(obj).data("dim");
+        var v = filterValues[cbID];
         $(obj).prop("checked", v);
     });
     $(".slider").each(function (index, obj) {
@@ -233,9 +245,31 @@ function checkboxChanged(e, ui) {
     window.history.replaceState(getCurrentState(), document.title);
 }
 
+function filterChanged(e, ui) {
+    if (!inited)
+        return;
+
+    var cb = $(this);
+    var d = parseInt(cb.data("dim"));
+    var v = cb.prop("checked");
+
+    var trueCount = 0;
+    for (x in filterValues)
+        if (filterValues[x])
+            trueCount++;
+    if (trueCount == 1 && !cb.prop("checked")) {
+        cb.prop("checked", true);
+        return alert("You must select at least one checkbox.");
+    }
+
+    setFilter(d, v);
+    window.history.replaceState(getCurrentState(), document.title);
+}
+
 function getCurrentState() {
     var state = {"article": currentArticle,
         "checkboxValues": checkboxValues.slice(),
+        "filterValues": filterValues.slice(),
         "sliderValues": sliderValues.slice()}
     return state;
 }
@@ -342,6 +376,7 @@ $(document).ready(function () {
 
     // Checkboxes.
     $(".dim-checkbox").change(checkboxChanged);
+    $(".cat-checkbox").change(filterChanged);
     updateUI();
 
     // History and states.

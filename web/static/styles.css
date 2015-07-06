@@ -27,7 +27,6 @@ body {
 #panel h1 { font-size: 18px; }
 #panel h2 { font-size: 12px; margin: 10px 0 5px; font-weight: normal; }
 #panel #top { background-color: #bfd575; }
-#panel .colorblock { height: 0.5em; }
 
 #pond {
     position: relative;
@@ -36,6 +35,8 @@ body {
     background-color: #fff;
     /*border: 1px solid #aaa;*/
     padding: 10px;
+    display: block;
+    margin-top: 5px;
 }
 
 /*#pond .fish {
@@ -214,8 +215,13 @@ body {
 
 #legend {
     font-size: 12px;
-    text-align: center;
-    padding: 0.25em 0;
+    padding: 5px 0;
+}
+
+#legend div {
+    float: left;
+    width: 50%;
+    padding-left: 10px;
 }
 
 #legend .box {
