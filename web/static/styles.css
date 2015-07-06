@@ -1,3 +1,8 @@
+body {
+    position: relative;
+    max-width: 1500px;
+}
+
 #main {
     padding: 10px;
     margin-right: 410px;

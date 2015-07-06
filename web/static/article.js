@@ -329,6 +329,17 @@ $(document).ready(function () {
         $("body").ScrollTo();
     });
 
+    // Positioning the exploratory panel when resizing.
+    $(window).resize(function (e) {
+        var panel = $("#panel");
+        var w = $(window).width();
+        if (w > 1500)
+            panel.css("right", w - 1500);
+        else
+            panel.css("right", 0);
+    });
+    $(window).resize();
+
     // AJAX status.
     var lastLoadTimeout = 0;
     $(document).ajaxStart(function () {
