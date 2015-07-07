@@ -17,3 +17,9 @@ class SimilarityAdmin(admin.ModelAdmin):
 class SectionAdmin(admin.ModelAdmin):
     list_display = ["article", "section_no", "title"]
     search_fields = ["article__title"]
+
+
+@admin.register(MainTopic)
+class MainTopicAdmin(admin.ModelAdmin):
+    list_display = ["name", "article_id"]
+    search_fields = ["name"]
