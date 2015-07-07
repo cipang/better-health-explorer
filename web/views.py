@@ -28,7 +28,7 @@ ALL_SIM = None
 
 
 def home(request):
-    return HttpResponseRedirect(reverse("article", args=(93,)))
+    return render(request, "home.html", {"topics": MainTopic.objects.all()})
 
 
 def article(request, pk):

@@ -53,6 +53,19 @@ class Section(models.Model):
         return "{0} {1}".format(self.article_id, self.section_no)
 
 
+class MainTopic(models.Model):
+    name = models.CharField("Topic name", max_length=80)
+    article_id = models.IntegerField("Linked to article ID")
+
+    class Meta:
+        verbose_name = "Main Topic"
+        verbose_name_plural = "Main Topics"
+        ordering = ["name"]
+
+    def __str__(self):
+        return "{0} {1}".format(self.name, self.article_id)
+
+
 def distribution(things, printed=False):
     c = Counter(things)
     dist = [(e, c[e]) for e in sorted(c)]
