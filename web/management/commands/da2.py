@@ -5,11 +5,11 @@ from web.models import *
 from web.views import SLIDER_MAX, SLIDER_MIN
 from bs4 import BeautifulSoup
 from random import randint
+from progress.bar import Bar
 from .cossim_text import cosine_similarity, text_to_vector
 from . import readability
 import math
 import os
-import sys
 import re
 
 
@@ -53,10 +53,10 @@ class Command(BaseCommand):
     )
 
     _colors = {
-        "conditions and treatments": "#add8e6",
-        "healthy living": "#98fb98",
-        "relationships and family": "#ffc0cb",
-        "services and support": "#ffe4b5",
+        "Conditions and treatments": "#add8e6",
+        "Healthy living": "#98fb98",
+        "Relationships and family": "#ffc0cb",
+        "Services and support": "#ffe4b5",
         "": "#da70d6"
     }
 
@@ -74,6 +74,7 @@ class Command(BaseCommand):
             self.sort_and_rank(result, lambda x: x.orig_reading, False, "reading")
             self.sort_and_rank(result, lambda x: x.get_orig_media(), True, "media")
 
+            self.stdout.write("Saving...")
             for md in result:
                 article = md.article
                 try:
@@ -111,7 +112,10 @@ class Command(BaseCommand):
                              flags=re.IGNORECASE)
 
         l = list()
-        qs = Article.objects.all().prefetch_related("image_set")
+        bar = Bar(width=20,
+                  suffix="%(percent)d%% %(index)d/%(max)d %(elapsed_td)s ETA %(eta_td)s")
+        qs = Article.objects.all()
+        bar.max = qs.count()
         for article in qs:
             md = Metadata(article)
 
@@ -127,15 +131,23 @@ class Command(BaseCommand):
             md.orig_reading = readability.grade_level(content)
 
             # Compute article nature: caring <-> conditions
-            t, c = article.title, article.category
-            if re_care.search(t) or re_care.search(c):
-                md.orig_care = randint(1, 1000)
-            elif re_cond.search(t) or re_cond.search(c):
-                md.orig_care = randint(1001, 2000)
-            else:
-                md.orig_care = randint(2001, 3000)
+            keywords = [article.title] + [x.name for x in article.keyword_set.all()]
+            care_scale = 0
+            for kw in keywords:
+                if re_care.search(kw):
+                    care_scale -= 1
+                if re_cond.search(kw):
+                    care_scale += 1
+            md.orig_care = abs(care_scale) * 10000 + randint(0, 9999)
+            if care_scale < 0:
+                md.orig_care *= -1
 
+            # Add the metadata object to the result list.
             l.append(md)
+            bar.next()
+
+        # Finish all computations, return the list.
+        bar.finish()
         return l
 
     def sort_and_rank(self, metadata_list, key, reverse, attr):
@@ -193,8 +205,7 @@ class Command(BaseCommand):
                     n = 0
 
     def choose_color(self, article):
-        if article.source != "BHC" or not article.category:
+        if article.source != "BHC":
             return ""
-        cat = article.category.split("/")
-        cat = cat[1].lower() if len(cat) > 2 else ""
-        return self._colors[cat]
+        else:
+            return self._colors.get(article.cat2, "")

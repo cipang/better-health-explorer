@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Image, OutLink
+from .models import *
 
 
 class ImageInline(admin.TabularInline):
@@ -12,11 +12,27 @@ class OutLinkInline(admin.TabularInline):
     extra = 1
 
 
+class Category3Inline(admin.TabularInline):
+    model = Category3
+    extra = 1
+
+
+class Category35Inline(admin.TabularInline):
+    model = Category35
+    extra = 1
+
+
+class KeywordInline(admin.TabularInline):
+    model = Keyword
+    extra = 1
+
+
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ["pk", "title", "last_modified"]
     list_display_links = ["title"]
-    inlines = [ImageInline, OutLinkInline]
+    inlines = [KeywordInline, ImageInline, OutLinkInline,
+               Category3Inline, Category35Inline]
     search_fields = ["title"]
 
 

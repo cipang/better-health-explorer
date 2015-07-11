@@ -66,6 +66,7 @@ class MainTopic(models.Model):
         return "{0} {1}".format(self.name, self.article_id)
 
 
+# Usage: distribution(x.care for x in ArticleAttr.objects.all())
 def distribution(things, printed=False):
     c = Counter(things)
     dist = [(e, c[e]) for e in sorted(c)]
