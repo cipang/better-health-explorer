@@ -75,7 +75,7 @@ class Category35(models.Model):
 
 class Keyword(models.Model):
     article = models.ForeignKey(Article)
-    name = models.CharField("Keyword", max_length=200)
+    name = models.CharField("Keyword", max_length=200, db_index=True)
 
     class Meta:
         verbose_name = "Keyword"

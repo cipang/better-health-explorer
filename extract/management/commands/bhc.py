@@ -50,7 +50,7 @@ class Command(BaseCommand):
         unique_key = xml_content.find("UniqueKey").text
         title = xml_content.find("Title").text
         summary = xml_content.find("Summary").text
-        content = xml_content.find("Body").text
+        content = xml_content.find("Body").text.strip()
         content_partner = xml_cp.find("Name").text.strip()
 
         # Categories.
@@ -123,8 +123,13 @@ class Command(BaseCommand):
         img_count = 0
         all_images = soup.find_all("img", src=True)
         for img in all_images:
+            src = img["src"]
+            if src.endswith("ecblank.gif"):
+                continue
+            src = src.replace("../../", "/bhcv2/")
+
             image = Image(article=article)
-            image.src = img["src"]
+            image.src = src
             image.alt = img.get("alt", "")
             image.save()
             img_count += 1
