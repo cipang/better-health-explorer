@@ -191,7 +191,6 @@ def catch_fish(request):
             break
 
     result = tier0 + tier1 + tier2
-    print(_get_all_sims.cache_info())
     return JsonResponse({"result": result})
 
 
