@@ -28,6 +28,7 @@ class Command(BaseCommand):
                 article.summary = summary
                 article.content = '<p class="bhc-youtube-summary">' + \
                     summary + '</p>' + html
+                article.cat2 = "Video"
                 article.last_modified = timezone.now()
                 article.remarks = "{0} {1}".format(__name__, timezone.now())
                 article.save()

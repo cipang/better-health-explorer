@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from django.http import Http404, JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
-from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.db.models import Q
 from extract.models import Article
 from web.models import *
 from web.overlapremoval import Rectangle, remove_overlap
 from random import randint
+from functools import lru_cache, reduce
 # from collections import namedtuple
 import math
+import operator
 
 
 # Point = namedtuple("Point", ["x", "y"])
@@ -15,7 +17,9 @@ import math
 SLIDER_MIN = 1
 SLIDER_MAX = 20
 # CENTER_DISTANCE_MIN = 100
-ALL_SIM = None
+# ALL_SIM = None
+CAT2_LIST = ("Conditions and treatments", "Healthy living",
+             "Relationships and family", "Services and support", "Video")
 
 
 # class FishRect(Rectangle):
@@ -101,10 +105,13 @@ def article_match_with_silders(current, sliders, checkboxes, filters):
 
     # Add filters if necessary.
     if not all(filters):
-        # DO Something here.
-        pass
+        query = reduce(operator.or_,
+                       (Q(article__cat2=x[1]) for x in zip(filters, CAT2_LIST) if x[0]))
+        print(query)
+        qs = qs.filter(query)
 
-    pool = [(attr, _get_sim(current, attr.article.id)) for attr in qs]
+    sim_dict = _get_all_sims(current)
+    pool = [(attr, sim_dict.get(attr.article.id, 0.0)) for attr in qs]
     pool.sort(key=lambda x: abs(x[1] - sim))
     for t in pool[0:100]:
         attr = t[0]
@@ -115,19 +122,9 @@ def article_match_with_silders(current, sliders, checkboxes, filters):
         yield (attr, score, t[1])
 
 
-def _get_sim(a, b):
-    if a == b:
-        return 20
-
-    # Retrieve similarity values if needed.
-    global ALL_SIM
-    if ALL_SIM is None:
-        print("Initalizing similarity...")
-        qs = ArticleSimilarity.objects.all()
-        ALL_SIM = dict(((row.a, row.b), row.similarity) for row in qs)
-
-    key = (a, b)
-    return ALL_SIM.get(key, 0)
+@lru_cache()
+def _get_all_sims(a):
+    return {x.b: x.similarity for x in ArticleSimilarity.objects.filter(a=a)}
 
 
 def catch_fish(request):
@@ -194,6 +191,7 @@ def catch_fish(request):
             break
 
     result = tier0 + tier1 + tier2
+    print(_get_all_sims.cache_info())
     return JsonResponse({"result": result})
 
 

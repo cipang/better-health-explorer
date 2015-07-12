@@ -1,7 +1,7 @@
 var currentArticle, inited = false;
 var checkboxValues = [true, true, true, true];
 var filterValues = [true, true, true, true, true];
-var sliderValues = [19, 10, 10, 10];
+var sliderValues = [20, 10, 10, 10];
 var hoveredFish = null, hoveredObj = null;
 var clickedFish = false;
 var articleOpened = 1;
@@ -125,11 +125,11 @@ function fishClicked() {
 
     openArticle(article);
     fishMouseOut();
-    if (sliderValues[0] < 19) {
-        sliderValues[0] = 19;
+    if (sliderValues[0] < 20) {
+        sliderValues[0] = 20;
         var val, animateSlider = function () {
             var slider = $(".slider:first");
-            if ((val = slider.slider("value")) != 19) {
+            if ((val = slider.slider("value")) != 20) {
                 slider.slider("value", val + 1);
                 setTimeout(animateSlider, 100);
             }

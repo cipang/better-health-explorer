@@ -57,7 +57,8 @@ class Command(BaseCommand):
         "Healthy living": "#98fb98",
         "Relationships and family": "#ffc0cb",
         "Services and support": "#ffe4b5",
-        "": "#da70d6"
+        "": "#da70d6",
+        "Video": "#da70d6"
     }
 
     def handle(self, *args, **options):
@@ -215,6 +216,6 @@ class Command(BaseCommand):
 
     def choose_color(self, article):
         if article.source != "BHC":
-            return ""
+            return self._colors["Video"]
         else:
             return self._colors.get(article.cat2, "")
