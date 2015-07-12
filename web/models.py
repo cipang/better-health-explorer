@@ -1,6 +1,7 @@
 from django.db import models
 from extract.models import Article
 from collections import Counter
+import math
 
 
 class ArticleAttr(models.Model):
@@ -74,3 +75,14 @@ def distribution(things, printed=False):
         for item in dist:
             print("{0}\t{1}".format(*item))
     return dist
+
+
+def even_distribute(collection, group_min, group_max):
+    max_per_group = math.ceil(len(collection) / (group_max - group_min + 1))
+    group, index = group_min, 0
+    for x in collection:
+        yield (group, index, x)
+        index += 1
+        if index >= max_per_group:
+            group += 1
+            index = 0

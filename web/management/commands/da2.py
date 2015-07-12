@@ -91,16 +91,10 @@ class Command(BaseCommand):
                 aa.save()
 
         if options["sim"]:
-            result = self.compute_similarity()
-            for a, b, similarity in result:
-                try:
-                    row = ArticleSimilarity.objects.get(a=a, b=b)
-                except ArticleSimilarity.DoesNotExist:
-                    row = ArticleSimilarity(a=a, b=b)
-                row.similarity = similarity
-                row.save()
+            self.compute_similarity()
 
-    def get_article_text(self, article):
+    @staticmethod
+    def get_article_text(article):
         """Return the text content of an article without HTML tags."""
         soup = BeautifulSoup(article.content)
         return soup.get_text()
@@ -112,9 +106,8 @@ class Command(BaseCommand):
                              flags=re.IGNORECASE)
 
         l = list()
-        bar = Bar(width=20,
-                  suffix="%(percent)d%% %(index)d/%(max)d %(elapsed_td)s ETA %(eta_td)s")
         qs = Article.objects.all()
+        bar = self.new_bar()
         bar.max = qs.count()
         for article in qs:
             md = Metadata(article)
@@ -150,59 +143,75 @@ class Command(BaseCommand):
         bar.finish()
         return l
 
-    def sort_and_rank(self, metadata_list, key, reverse, attr):
+    @staticmethod
+    def sort_and_rank(metadata_list, key, reverse, attr):
         self.stdout.write("\t" + attr)
-        rank = SLIDER_MIN
-        i = 0
-        max_objects_per_rank = math.ceil(len(metadata_list) / ((SLIDER_MAX - SLIDER_MIN) + 1))
         metadata_list.sort(key=key, reverse=reverse)
-        for metadata in metadata_list:
+        for rank, i, metadata in even_distribute(metadata_list, SLIDER_MIN, SLIDER_MAX):
             setattr(metadata, attr, rank)
-            i += 1
-            if i >= max_objects_per_rank:
-                rank += 1
-                i = 0
+
+    @staticmethod
+    def new_bar():
+        return Bar(width=20,
+                   suffix="%(percent)d%% %(index)d/%(max)d %(elapsed_td)s ETA %(eta_td)s")
 
     def compute_similarity(self):
+        if ArticleSimilarity.objects.first():
+            raise CommandError("Clear the ArticleSimilarity table first.")
+
+        self.stdout.write("Caching all article IDs...")
+        all_article_ids = list(Article.objects.values_list("id", flat=True).order_by("id"))
+        # all_article_ids = all_article_ids[100:160]
+
+        def get_info(a):
+            words = text_to_vector(self.get_article_text(a))
+            links = set(x.target_url for x in a.outlink_set.all())
+            cats = set(x.name for x in a.category3_set.all()) or set(x.name for x in a.category35_set.all())
+            keywords = set(x.name for x in a.keyword_set.all())
+            provider = a.provider
+            return (words, links, cats, keywords, provider)
+
+        def percent(x, y):
+            return x / y if y else 0.0
+
+        bar = self.new_bar()
         self.stdout.write("Computing similarity...")
         cossim_db = defaultdict(dict)
-        i = 0
-        qs1 = Article.objects.order_by("id").prefetch_related("outlink_set")
-        for a in qs1:
-            qs2 = Article.objects.filter(id__gt=a.id).order_by("id")
-            a_links = set(x.alt.lower() for x in a.outlink_set.all())
-            a_words = text_to_vector(self.get_article_text(a))
-            for b in qs2:
-                assert a.id < b.id
-                b_words = text_to_vector(self.get_article_text(b))
-                cossim = cosine_similarity(a_words, b_words)
-                # Bonus points if two articles are linked.
-                if b.source == "BHC" and b.title.lower() in a_links:
-                    cossim += 0.5
-                cossim_db[a.id][b.id] = cossim
-                i += 1
-                if i % 1000 == 0:
-                    self.stdout.write("\t{0} records processed.".format(i))
-        self.stdout.write("\t{0} records processed.".format(i))
+        for i, a_id in enumerate(bar.iter(all_article_ids)):
+            a = Article.objects.get(id=a_id)
+            a_info = get_info(a)
+            for j, b_id in enumerate(all_article_ids[i + 1:]):
+                b = Article.objects.get(id=b_id)
+                assert a_id < b_id
+                b_info = get_info(b)
 
+                # Compare each component.
+                sim_words = cosine_similarity(a_info[0], b_info[0])
+                sim_links = 1.0 if b.unique_key in a_info[1] or a.unique_key in b_info[1] else 0.0
+                sim_cats = percent(len(a_info[2] & b_info[2]), len(a_info[2]))
+                sim_keywords = percent(len(a_info[3] & b_info[3]), len(a_info[3]))
+                sim_provider = 1.0 if a_info[4] == b_info[4] else 0.0
+
+                cossim = sim_words * 0.2 + sim_links * 0.3 + sim_cats * 0.2 + \
+                    sim_keywords * 0.2 + sim_provider * 0.1
+                cossim_db[a.id][b.id] = cossim
+                # print(sim_words, sim_links, sim_cats, sim_keywords, sim_provider, cossim)
+            # End inner for loop.
+
+        bar = self.new_bar()
         self.stdout.write("Sorting similarity...")
-        all_article_ids = sorted(cossim_db.keys())
-        for i in all_article_ids:
-            cossim_tuples = list()
-            n, rank = 0, SLIDER_MIN
+        for i in bar.iter(all_article_ids):
+            cossim_list = list()
             for j in all_article_ids:
                 if i == j:
                     continue
                 ki, kj = (i, j) if i < j else (j, i)
-                cossim_tuples.append((i, j, cossim_db[ki][kj]))
-            cossim_tuples.sort(key=lambda x: x[2])      # Sort the cossim.
-            max_objects_per_rank = math.ceil(len(cossim_tuples) / ((SLIDER_MAX - SLIDER_MIN) + 1))
-            for t in cossim_tuples:
-                yield (t[0], t[1], rank)    # Equals to (i, j, rank)
-                n += 1
-                if n >= max_objects_per_rank:
-                    rank += 1
-                    n = 0
+                cossim_list.append((i, j, cossim_db[ki][kj]))
+
+            # Sort the cossim.
+            cossim_list.sort(key=lambda x: x[2])
+            for g, i, t in even_distribute(cossim_list, SLIDER_MIN, SLIDER_MAX):
+                ArticleSimilarity.objects.create(a=t[0], b=t[1], similarity=g)
 
     def choose_color(self, article):
         if article.source != "BHC":
