@@ -56,7 +56,7 @@ class Command(BaseCommand):
         "Conditions and treatments": "#add8e6",
         "Healthy living": "#98fb98",
         "Relationships and family": "#ffc0cb",
-        "Services and support": "#ffa500",
+        "Services and support": "#ffd700",
         "": "#da70d6",
         "Video": "#da70d6"
     }
