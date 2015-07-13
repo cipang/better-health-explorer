@@ -19,7 +19,7 @@
     .btn { margin-top: -5px; }
     #topics { margin-top: 1.5em; }
     #topiclist { padding: 0; }
-    #topiclist li { float: left; width: 25%; list-style-type: none; }
+    #topiclist li { float: left; width: 25%; list-style-type: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 2em; }
     footer { text-align: center; color: #aaa; font-size: 12px; margin-top: 6.5em; }
     </style>
 </head>
@@ -39,7 +39,7 @@
             <p>or choose a popular topic to start with:</p>
             <ul class="clearfix" id="topiclist">
                 {% for t in topics %}
-                    <li><a href="{% url 'article' t.article_id %}">{{ t.name }}</a></li>
+                    <li><a href="{% url 'article' t.article_id %}" title="{{ t.name }}">{{ t.name }}</a></li>
                 {% empty %}
                     <li>(Empty)</li>
                 {% endfor %}

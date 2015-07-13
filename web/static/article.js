@@ -28,6 +28,7 @@ function loadContent(article, isStated) {
             $("<div>").html(data.content).insertAfter("#summary");
         }
         handleArticleLinks();
+        handleArticleImages();
         if (!isStated || articleOpened == 1)
             breadcrumbAdd(article, data);
         if ($(window).scrollTop() != 0)
@@ -278,14 +279,24 @@ function handleArticleLinks() {
     $("#acontent a").not(".slink").click(articleLinkClicked);
 }
 
-function articleLinkClicked(e) {
-    e.preventDefault();
-    var url = $(this).attr("href");
-    $.get("/find-article", {"url": url}, function (data, status, xhr) {
-        openArticle(data.article);
-    }).fail(function () {
-        alert("Cannot open this article. It is not provided in this demo.");
+function handleArticleImages() {
+    $("#acontent img").each(function () {
+        var $this = $(this);
+        var newSrc = "http://www.betterhealth.vic.gov.au/" + $this.attr("src").replace("../../", "bhcv2/");
+        $(this).attr("src", newSrc);
     });
+}
+
+function articleLinkClicked(e) {
+    var url = $(this).attr("href");
+    if (url.indexOf("://") == -1) {
+        e.preventDefault();
+        $.get("/find-article", {"url": url}, function (data, status, xhr) {
+            openArticle(data.article);
+        }).fail(function () {
+            alert("Cannot open this article. It is not provided in this demo.");
+        });
+    }
 }
 
 function breadcrumbAdd(id, article) {

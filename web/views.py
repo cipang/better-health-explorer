@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.conf import settings
 from django.db.models import Q
@@ -122,8 +122,7 @@ def _get_articles_for(current, filters):
     # Add filters if necessary.
     if not all(filters):
         query = reduce(operator.or_,
-                       (Q(article__cat2=x[1]) for x in zip(filters, CAT2_LIST) if x[0]))
-        print(query)
+                       (Q(cat2=x[1]) for x in zip(filters, CAT2_LIST) if x[0]))
         qs = qs.filter(query)
     return list(qs.values_list("id", flat=True))
 
@@ -259,9 +258,5 @@ def find_article(request):
     url = request.GET.get("url")
     if not url:
         return HttpResponseBadRequest("No URL specified.")
-    title = url.replace(".html", "").replace("_", " ")
-    try:
-        a = Article.objects.get(title=title)
-        return JsonResponse({"article": a.id})
-    except Article.DoesNotExist:
-        raise Http404("No mapping for " + url)
+    a = get_object_or_404(Article, unique_key=url)
+    return JsonResponse({"article": a.id})
