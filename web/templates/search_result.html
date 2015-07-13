@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Result</title>
+
+    {% load staticfiles %}
+    <script src="{% static 'jquery-1.11.2.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap.css' %}">
+    <script src="{% static 'bootstrap.min.js' %}"></script>
+    <link href="http://fonts.googleapis.com/css?family=Bitter" rel="stylesheet" type="text/css">
+
+    <style type="text/css">
+    body, input, .btn { font-size: 20px; }
+    h1 { color: #b3000c; font-family: "Bitter", serif; font-size: 28px; margin-bottom: 30px; }
+    #keyword, .btn { width: 100%; }
+    .scell { padding-right: 0; }
+    .btn { margin-top: -5px; }
+    #result { margin-top: 1.5em; }
+    #result ul { padding: 0; }
+    #result ul li { list-style-type: none; margin-bottom: 2em; }
+    .summary { font-size: 18px; }
+    .addinfo { font-size: 14px; color: #aaa; }
+    .resultinfo { color: #aaa; font-size: 14px; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container" id="main">
+        <h1>Search - Better Health Explorer</h1>
+        <div id="searchform">
+            <form action="/search" method="get">
+                <div class="row">
+                    <div class="col-md-8 col-sm-8 col-xs-8 scell"><input type="text" name="q" id="keyword" autocomplete="off" value="{{ q }}"></div>
+                    <div class="col-md-2 col-sm-2 col-xs-4 scell"><button type="submit" class="btn-info btn">Search!</button></div>
+                    <div class="col-md-2 col-sm-2 col-xs-0">&nbsp;</div>
+                </div>
+            </form>
+        </div>
+        {% if result != None %}
+        <div id="result">
+            <p class="resultinfo">Search Result - Found {{ result|length}} item{{ result|length|pluralize}}:</p>
+            <ul>
+                {% for r, score in result %}
+                    <li><a href="{% url 'article' r.id %}" title="{{ r.title }}">{{ r.title }}</a><br>
+                    <span class="summary">{{ r.summary }}</span><br>
+                    <span class="addinfo">Category: {{ r.cat2 }} &nbsp; | &nbsp; Rank: {{ forloop.counter }}</span><!-- {{ score }} --></li>
+                {% empty %}
+                    <li>(Search Not Found)</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
