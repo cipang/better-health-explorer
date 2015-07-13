@@ -99,27 +99,33 @@ def article_match_with_silders(current, sliders, checkboxes, filters):
     # Obtains the selected dimensions.
     a = [x[1] for x in zip(checkboxes, sliders) if x[0]]
 
-    # Obtains the article queryset.
-    qs = ArticleAttr.objects.select_related("article").\
-        exclude(article__id=current)
+    # Obtains other articles and compares their similarities.
+    other_articles = _get_articles_for(current, filters)
+    sim_dict = _get_all_sims(current)
+    pool = [(x, sim_dict.get(x, 0.0)) for x in other_articles]
+    pool.sort(key=lambda x: abs(x[1] - sim))
+    pool = map(lambda x: x[0], pool[0:100])
+    result = list()
+    for attr in ArticleAttr.objects.select_related("article").filter(article__id__in=pool):
+        # b = (attr.media, attr.care, attr.reading, randint(1, 10))
+        attr_sim = sim_dict[attr.article_id]
+        v = (attr_sim, attr.media, attr.care, attr.reading)
+        b = [x[1] for x in zip(checkboxes, v) if x[0]]
+        score = _cosine_similarity(a, b)
+        result.append((attr, score, attr_sim))
+    return result
 
+
+@lru_cache()
+def _get_articles_for(current, filters):
+    qs = Article.objects.exclude(id=current)
     # Add filters if necessary.
     if not all(filters):
         query = reduce(operator.or_,
                        (Q(article__cat2=x[1]) for x in zip(filters, CAT2_LIST) if x[0]))
         print(query)
         qs = qs.filter(query)
-
-    sim_dict = _get_all_sims(current)
-    pool = [(attr, sim_dict.get(attr.article.id, 0.0)) for attr in qs]
-    pool.sort(key=lambda x: abs(x[1] - sim))
-    for t in pool[0:100]:
-        attr = t[0]
-        # b = (attr.media, attr.care, attr.reading, randint(1, 10))
-        v = (t[1], attr.media, attr.care, attr.reading)
-        b = [x[1] for x in zip(checkboxes, v) if x[0]]
-        score = _cosine_similarity(a, b)
-        yield (attr, score, t[1])
+    return list(qs.values_list("id", flat=True))
 
 
 @lru_cache()
@@ -129,11 +135,11 @@ def _get_all_sims(a):
 
 def catch_fish(request):
     article_id = int(request.GET.get("article"))
-    sliders = list(map(int, request.GET.getlist("sliders[]")))
-    checkboxes = list(map(lambda x: x == "true",
-                          request.GET.getlist("checkboxes[]")))
-    filters = list(map(lambda x: x == "true",
-                       request.GET.getlist("filters[]")))
+    sliders = tuple(map(int, request.GET.getlist("sliders[]")))
+    checkboxes = tuple(map(lambda x: x == "true",
+                           request.GET.getlist("checkboxes[]")))
+    filters = tuple(map(lambda x: x == "true",
+                        request.GET.getlist("filters[]")))
     assert len(sliders) and len(checkboxes) == len(sliders) and \
         checkboxes[0] and any(filters)
 
@@ -142,7 +148,7 @@ def catch_fish(request):
                                              checkboxes,
                                              filters)
     # Sort result by the score.
-    all_results = sorted(all_results, key=lambda x: x[1], reverse=True)
+    all_results.sort(key=lambda x: x[1], reverse=True)
 
     # all_results = sorted(all_results, key=lambda x: x[0].article.title)
     # all_results = all_results
@@ -191,7 +197,9 @@ def catch_fish(request):
             break
 
     result = tier0 + tier1 + tier2
-    return JsonResponse({"result": result})
+    return JsonResponse({"result": result,
+                         "cache_info": [repr(_get_all_sims.cache_info()),
+                                        repr(_get_articles_for.cache_info())]})
 
 
 def overlap_removal_test(request):
