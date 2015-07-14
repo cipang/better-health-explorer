@@ -149,10 +149,18 @@ function wrap(text) {
             if (tspan.node().getComputedTextLength() > width) {
                 line.pop();
                 tspan.text(line.join(" "));
+                if (line.length == 0) {
+                    lineNumber--;
+                    tspan.remove();
+                }
                 line = [word];
                 tspan = text.append("tspan").attr("x", x).attr("y", y).attr("font-size", fontSize).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
             }
         }
+        text.select("tspan").each(function () {
+            if (!d3.select(this).text())
+                d3.select(this).remove();
+        });
     });
 }
 

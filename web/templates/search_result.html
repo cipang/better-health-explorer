@@ -14,6 +14,8 @@
     body, input, .btn { font-size: 20px; }
     h1 { color: #b3000c; font-family: "Bitter", serif; font-size: 28px; margin-bottom: 30px; }
     #keyword, .btn { width: 100%; }
+    #topbanner h1 { float: left; }
+    #topbanner a { float: right; font-size: 14px; display: block; margin-top: 0.9em; text-align: right; }
     .scell { padding-right: 0; }
     .btn { margin-top: -5px; }
     #result { margin-top: 1.5em; }
@@ -26,7 +28,10 @@
 </head>
 <body>
     <div class="container" id="main">
-        <h1>Search - Better Health Explorer</h1>
+        <div class="clearfix" id="topbanner">
+            <h1>Search - Better Health Explorer</h1>
+            <a href="{% url 'home' %}">Back to Home</a>
+        </div>
         <div id="searchform">
             <form action="/search" method="get">
                 <div class="row">

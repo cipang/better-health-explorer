@@ -309,11 +309,15 @@ function breadcrumbAdd(id, article) {
     li.appendTo("#navcontrol");
     $("<li>").addClass("arrow").text("\u279c").appendTo("#navcontrol");
     historyCount++;
-    if (historyCount > 4) {
+
+    // Put extra items to the list if the breadcrumb bar is more than 2 rows.
+    var i = historyCount;
+    while ($("#navcontrol").height() >= 40 && --i >= 0) {
         $("#navcontrol li.bc:first").appendTo("#historylist");
-        if (historyCount > 5)
+        var itemCountInList = $("#historylist li").length;
+        if ($("#navcontrol li.arrow:first").next().hasClass("arrow"))
             $("#navcontrol li.arrow:first").remove();
-        $("#history-count").html(historyCount - 4);
+        $("#history-count").html(itemCountInList);
         $("#historylist li.empty").remove();
     }
 }

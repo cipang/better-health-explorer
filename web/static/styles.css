@@ -86,7 +86,7 @@ body {
 #navcontrol li {
     list-style-type: none;
     float: left;
-    max-width: 155px;
+    max-width: 150px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
