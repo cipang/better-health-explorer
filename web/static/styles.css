@@ -156,9 +156,11 @@ body {
     background-color: #bfd575;
 }
 
-.slider {
+.slider, #reset-relevance {
     margin: 5px 10px 5px 30px;
 }
+
+#reset-relevance label { font-weight: normal; font-size: 12px; }
 
 #summary {
     background-color: #e6f07c;

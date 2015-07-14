@@ -11,6 +11,7 @@ function loadContent(article, isStated) {
     $.get("/content", {"article": article}, function (data, status, xhr) {
         $("#main").hide().css("opacity", "0").css("margin-left", "-10px");
         $("#pagetitle").html(data.title);
+        document.title = data.title;
         $("#acontent").empty();
         $("<div>").attr("id", "summary").html(data.summary).appendTo("#acontent");
         if (data.sections.length) {
@@ -126,7 +127,7 @@ function fishClicked() {
 
     openArticle(article);
     fishMouseOut();
-    if (sliderValues[0] < 20) {
+    if (sliderValues[0] < 20 && $("#reset-relevance-cb").prop("checked")) {
         sliderValues[0] = 20;
         var val, animateSlider = function () {
             var slider = $(".slider:first");
