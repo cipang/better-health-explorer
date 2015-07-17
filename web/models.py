@@ -30,6 +30,7 @@ class ArticleSimilarity(models.Model):
     a = models.IntegerField("Article A (with smaller ID)")
     b = models.IntegerField("Article B (with bigger ID)")
     similarity = models.SmallIntegerField(default=0)
+    raw_value = models.FloatField(default=0.0)
 
     class Meta:
         verbose_name = "ArticleSimilarity"

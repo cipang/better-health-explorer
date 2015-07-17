@@ -200,7 +200,8 @@ class Command(BaseCommand):
             # End inner for loop.
 
         bar = self.new_bar()
-        self.stdout.write("Sorting similarity...")
+        self.stdout.write("Sorting and writing similarity...")
+        normalize_similarity = self.normalize_similarity
         for i in bar.iter(all_article_ids):
             cossim_list = list()
             for j in all_article_ids:
@@ -212,7 +213,15 @@ class Command(BaseCommand):
             # Sort the cossim.
             cossim_list.sort(key=lambda x: x[2])
             for g, i, t in even_distribute(cossim_list, SLIDER_MIN, SLIDER_MAX):
-                ArticleSimilarity.objects.create(a=t[0], b=t[1], similarity=g)
+                ArticleSimilarity.objects.create(a=t[0], b=t[1], similarity=g,
+                                                 raw_value=t[2])
+            # for t in cossim_list:
+            #     ArticleSimilarity.objects.create(a=t[0], b=t[1], raw_value=t[2],
+            #                                      similarity=normalize_similarity(t[2]))
+
+    @staticmethod
+    def normalize_similarity(x, min=SLIDER_MIN, max=SLIDER_MAX):
+        return round((SLIDER_MAX - SLIDER_MIN) * x + SLIDER_MIN)
 
     def choose_color(self, article):
         if article.source != "BHC":
