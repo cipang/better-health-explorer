@@ -19,10 +19,11 @@ class ArticleAttr(models.Model):
         verbose_name_plural = "ArticleAttrs"
 
     def __str__(self):
-        return "{0} {1} {2}".format(
+        return "{0} {1} {2} {3}".format(
             self.article if self.article_id else None,
-            self.length,
-            self.media)
+            self.media,
+            self.care,
+            self.reading)
 
 
 class ArticleSimilarity(models.Model):
@@ -64,7 +65,7 @@ class MainTopic(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        return "{0} {1}".format(self.name, self.article_id)
+        return "{0} ({1})".format(self.name, self.article_id)
 
 
 # Usage: distribution(x.care for x in ArticleAttr.objects.all())

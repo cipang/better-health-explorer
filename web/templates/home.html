@@ -17,7 +17,7 @@
     #keyword, .btn { width: 100%; }
     .scell { padding-right: 0; }
     .btn { margin-top: -5px; }
-    #topics { margin-top: 1.5em; }
+    #searchform { margin-top: 1.5em; }
     #topiclist { padding: 0; }
     #topiclist li { float: left; width: 25%; list-style-type: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 2em; }
     footer { text-align: center; color: #aaa; font-size: 12px; margin-top: 6.5em; }
@@ -26,17 +26,8 @@
 <body>
     <div class="container" id="main">
         <h1>Better Health Explorer</h1>
-        <div id="searchform">
-            <p>start by typing keywords to search:</p>
-            <form action="/search" method="get">
-                <div class="row">
-                    <div class="col-md-10 col-sm-10 col-xs-8 scell"><input type="text" name="q" id="keyword" autocomplete="off"></div>
-                    <div class="col-md-2 col-sm-2 col-xs-4 scell"><button type="submit" class="btn-info btn">Search!</button></div>
-                </div>
-            </form>
-        </div>
         <div id="topics">
-            <p>or choose a popular topic to start with:</p>
+            <p>choose a popular topic to start with:</p>
             <ul class="clearfix" id="topiclist">
                 {% for t in topics %}
                     <li><a href="{% url 'article' t.article_id %}" title="{{ t.name }}">{{ t.name }}</a></li>
@@ -45,13 +36,18 @@
                 {% endfor %}
             </ul>
         </div>
+        <div id="searchform">
+            <p>or type a word to find a topic:</p>
+            <form action="/search" method="get">
+                <div class="row">
+                    <div class="col-md-10 col-sm-10 col-xs-8 scell"><input type="text" name="q" id="keyword" autocomplete="off"></div>
+                    <div class="col-md-2 col-sm-2 col-xs-4 scell"><button type="submit" class="btn-info btn">Search!</button></div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <footer>&copy; 2014-2015 The University of Melbourne. Content provided by
     <a href="http://www.betterhealth.vic.gov.au/">Better Health Channel.</a></footer>
-
-    <script type="text/javascript">
-    $("#keyword").focus();
-    </script>
 </body>
 </html>

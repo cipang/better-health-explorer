@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from extract.models import *
 from web.models import *
+from progress.bar import Bar
 import re
 
 
@@ -11,14 +12,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         re_summary = re.compile(r"<(\w*) class=\"?summary\"?>.*?</\1>",
                                 flags=re.I | re.S)
-        re_section = re.compile(r"\<h2>(.*?)</h2>", flags=re.I | re.S)
+        re_section = re.compile(r"\<h2>(.*?)(</h2>|<br>)", flags=re.I | re.S)
+        bar = Bar(width=20,
+                  suffix="%(percent)d%% %(index)d/%(max)d %(elapsed_td)s ETA %(eta_td)s")
 
-        qs = Article.objects.filter(source="BHC").\
-            prefetch_related("section_set")
-        for a in qs:
-            for s in a.section_set.all():
-                s.delete()
+        qs = Article.objects.filter(source="BHC")
+        for a in bar.iter(qs):
+            a.section_set.all().delete()
             s = a.content
+            n = len(s)
             summary_match = re_summary.search(s)
             start = summary_match.end() + 1 if summary_match else 0
             section_no = 0
@@ -37,8 +39,5 @@ class Command(BaseCommand):
                 section_name = h2.group(1)
                 start = h2.end()
             else:
-                if start < len(s):
-                    add_section(s[start:len(s)])
-
-            self.stdout.write("Article \"{0}\": has {1} section(s).".format(
-                              a.title, section_no))
+                if start < n:
+                    add_section(s[start:n])

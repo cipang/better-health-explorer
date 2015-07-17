@@ -19,7 +19,7 @@ class Article(models.Model):
         verbose_name_plural = "Articles"
 
     def __str__(self):
-        return self.title
+        return "{0}: {1}".format(self.id, self.title)
 
 
 class Image(models.Model):
