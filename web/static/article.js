@@ -47,6 +47,7 @@ function loadContent(article, isStated) {
             $("#current-fish").hide();
             var article = $("#current-fish").data("article");
             if (article) {
+                $("#current-fish").removeData("article");
                 var bgColor = $("#current-fish").css("background-color");
                 $(".pondtitle").css("color", "#000").css("background-color", bgColor);
                 setTimeout(clearPondTitleBg, 2000);
