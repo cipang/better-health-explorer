@@ -38,8 +38,19 @@ function loadContent(article, isStated) {
         // Animations.
         $("#main").show().animate({"margin-left": 0, "opacity": 1},
             "slow");
+        var clearPondTitleBg = function () {
+            d3.select(".pondtitle").transition().
+                style("color", "#fff").
+                style("background-color", "#285c00");
+        };
         var callbackCleanup = function () {
             $("#current-fish").hide();
+            var article = $("#current-fish").data("article");
+            if (article) {
+                var bgColor = $("#current-fish").css("background-color");
+                $(".pondtitle").css("color", "#000").css("background-color", bgColor);
+                setTimeout(clearPondTitleBg, 2000);
+            }
             $("#current").html(data.title);
         };
         if (clickedFish) {
@@ -123,7 +134,9 @@ function fishClicked() {
     var w = $obj.outerWidth() || 120;
     var h = $obj.outerHeight() || 50;
     $("#current-fish").css("width", w + "px").css("height", h + "px").
-        css("left", offset.left + "px").css("top", offset.top + "px");
+        css("left", offset.left + "px").css("top", offset.top + "px").
+        css("background-color", $obj.closest("g").find("rect").attr("ofill")).
+        data("article", article);
 
     openArticle(article);
     fishMouseOut();

@@ -67,7 +67,8 @@ body {
 }*/
 
 .pondtitle {
-    padding: 0.5em;
+    padding: 9px 9px 6px 9px;
+    border-bottom: 3px solid #285c00;
     background-color: #285c00;
     font-family: "Bitter", serif;
     font-size: 18px;
