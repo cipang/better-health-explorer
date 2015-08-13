@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.conf import settings
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 from extract.models import Article
 from web.models import *
 from web.overlapremoval import Rectangle, remove_overlap
@@ -33,14 +34,19 @@ CAT2_LIST = ("Conditions and treatments", "Healthy living",
 
 
 def home(request):
-    return render(request, "home.html", {"topics": MainTopic.objects.all()})
+    if _check_login(request):
+        return render(request, "home.html", {"topics": MainTopic.objects.all()})
+    else:
+        return HttpResponseRedirect(reverse("login"))
 
 
 def article(request, pk):
-    return render(request, "article.html",
-                  {"loop": range(0, 20),
-                   "slider": range(1, 21),
-                   "pk": pk})
+    if _check_login(request):
+        return render(request, "article.html", {"loop": range(0, 20),
+                                                "slider": range(1, 21),
+                                                "pk": pk})
+    else:
+        return HttpResponseRedirect(reverse("login"))
 
 
 def content(request):
@@ -318,3 +324,19 @@ def search(request):
         result.sort(key=lambda x: x[1], reverse=True)
         result = result[0:100]
     return render(request, "search_result.html", {"q": q, "result": result})
+
+
+def login(request):
+    msg = ""
+    if request.method == "POST":
+        if request.POST.get("password") == "21111122":
+            redirect = HttpResponseRedirect(reverse("home"))
+            redirect.set_signed_cookie("hifish_login", "OK", max_age=86400)
+            return redirect
+        else:
+            msg = "Incorrect username or password."
+    return render(request, "login.html", {"msg": msg})
+
+
+def _check_login(request):
+    return request.get_signed_cookie("hifish_login", default=None) == "OK"
