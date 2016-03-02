@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-IS_SERVER = os.path.exists("/home/ubuntu")
+IS_SERVER = os.path.exists("/root")
 
 
 # Quick-start development settings - unsuitable for production
@@ -63,7 +63,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': "/Users/patrick/Documents/Health/hisdb.sqlite3" if not IS_SERVER else \
-            "/home/ubuntu/hisdb.sqlite3",
+            "/app/hisdb.sqlite3",
     }
 }
 
@@ -84,7 +84,44 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_URL = '/static/' if not IS_SERVER else \
-    'http://ifishtest.s3-website-ap-southeast-2.amazonaws.com/static/'
+STATIC_URL = '/static/'
 
-STATIC_ROOT = '/Users/patrick/Desktop/tmp_static'
+STATIC_ROOT = '/appstatic/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'simple': {'format': '[%(levelname)s] %(asctime)s: %(message)s'},
+        'sql': {'format': '[SQL] %(message)s'},
+    },
+    'handlers': {
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'sql': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'sql',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {  # To capture SQL statements.
+            'handlers': ['sql'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    }
+}
