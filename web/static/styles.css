@@ -22,7 +22,7 @@ body {
     height: 100%;
     border-left: 1px solid #ccc;
     box-shadow: -5px 0 25px #ccc;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
 }
 
 #panel h1 { font-size: 18px; }
