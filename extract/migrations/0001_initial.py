@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
                 ('src', models.URLField()),
                 ('alt', models.CharField(max_length=50)),
-                ('article', models.ForeignKey(to='extract.Article')),
+                ('article', models.ForeignKey(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name': 'Image',

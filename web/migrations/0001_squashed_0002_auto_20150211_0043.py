@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('media', models.SmallIntegerField(default=0)),
                 ('is_video', models.BooleanField(default=False)),
                 ('is_local', models.BooleanField(default=False)),
-                ('article', models.OneToOneField(to='extract.Article')),
+                ('article', models.OneToOneField(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name_plural': 'ArticleAttrs',

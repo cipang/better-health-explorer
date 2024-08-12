@@ -1,20 +1,21 @@
-from django.conf.urls import patterns, include, url
+from django.urls import re_path
 from django.contrib import admin
+from web import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
-    # url(r'^$', 'his.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+    # re_path(r'^$', 'his.views.home', name='home'),
+    # re_path(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', 'web.views.home', name='home'),
-    url(r'^login/$', 'web.views.login', name='login'),
-    url(r'^article/(?P<pk>[0-9]+)$', 'web.views.article', name='article'),
-    url(r'^content$', 'web.views.content'),
-    url(r'^summary$', 'web.views.summary'),
-    url(r'^catchfish$', 'web.views.catch_fish'),
-    url(r'^ortest$', 'web.views.overlap_removal_test'),
-    url(r'^images/(?P<image>.+)$', 'web.views.image_redirect'),
-    url(r'^find-article$', 'web.views.find_article'),
-    url(r'^search$', 'web.views.search', name="search"),
-)
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^$', views.home, name='home'),
+    re_path(r'^login/$', views.login, name='login'),
+    re_path(r'^article/(?P<pk>[0-9]+)$', views.article, name='article'),
+    re_path(r'^content$', views.content),
+    re_path(r'^summary$', views.summary),
+    re_path(r'^catchfish$', views.catch_fish),
+    re_path(r'^ortest$', views.overlap_removal_test),
+    re_path(r'^images/(?P<image>.+)$', views.image_redirect),
+    re_path(r'^find-article$', views.find_article),
+    re_path(r'^search$', views.search, name="search"),
+]

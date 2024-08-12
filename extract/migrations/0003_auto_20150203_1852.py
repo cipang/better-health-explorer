@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('target_source', models.CharField(max_length=5)),
                 ('target_url', models.URLField()),
                 ('alt', models.CharField(max_length=200)),
-                ('article', models.ForeignKey(to='extract.Article')),
+                ('article', models.ForeignKey(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name_plural': 'OutLinks',

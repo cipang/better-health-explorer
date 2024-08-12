@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, verbose_name='Category 3 Name')),
-                ('article', models.ForeignKey(to='extract.Article')),
+                ('article', models.ForeignKey(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name_plural': 'Category3',
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, verbose_name='Category 35 Name')),
-                ('article', models.ForeignKey(to='extract.Article')),
+                ('article', models.ForeignKey(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name_plural': 'Category35',
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, verbose_name='Keyword')),
-                ('article', models.ForeignKey(to='extract.Article')),
+                ('article', models.ForeignKey(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name_plural': 'Keywords',

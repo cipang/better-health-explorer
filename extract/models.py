@@ -23,7 +23,7 @@ class Article(models.Model):
 
 
 class Image(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     src = models.URLField()
     alt = models.CharField(max_length=200)
 
@@ -36,7 +36,7 @@ class Image(models.Model):
 
 
 class OutLink(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     target_source = models.CharField(max_length=5)
     target_url = models.URLField()
     alt = models.CharField(max_length=200)
@@ -50,7 +50,7 @@ class OutLink(models.Model):
 
 
 class Category3(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     name = models.CharField("Category 3 Name", max_length=200)
 
     class Meta:
@@ -62,7 +62,7 @@ class Category3(models.Model):
 
 
 class Category35(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     name = models.CharField("Category 35 Name", max_length=200)
 
     class Meta:
@@ -74,7 +74,7 @@ class Category35(models.Model):
 
 
 class Keyword(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     name = models.CharField("Keyword", max_length=200, db_index=True)
 
     class Meta:
