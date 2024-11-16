@@ -134,11 +134,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'django.db.backends': {  # To capture SQL statements.
-            'handlers': ['sql'],
-            'level': 'DEBUG',
-            'propagate': True,
-        }
+        # 'django.db.backends': {  # To capture SQL statements.
+        #     'handlers': ['sql'],
+        #     'level': 'DEBUG',
+        #     'propagate': True,
+        # }
     }
 }
 
