@@ -58,4 +58,6 @@ target/
 
 # Sublime Text
 *.sublime-workspace
+.idea/
 
+/*.sqlite3

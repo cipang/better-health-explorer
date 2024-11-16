@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404, JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.conf import settings
 from django.db.models import Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from extract.models import Article
 from web.models import *
 from web.overlapremoval import Rectangle, remove_overlap

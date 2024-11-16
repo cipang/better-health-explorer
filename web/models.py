@@ -5,7 +5,7 @@ import math
 
 
 class ArticleAttr(models.Model):
-    article = models.OneToOneField(Article)
+    article = models.OneToOneField(Article, on_delete=models.DO_NOTHING)
     length = models.SmallIntegerField(default=0)
     media = models.SmallIntegerField(default=0)
     care = models.SmallIntegerField(default=0)
@@ -42,7 +42,7 @@ class ArticleSimilarity(models.Model):
 
 
 class Section(models.Model):
-    article = models.ForeignKey(Article)
+    article = models.ForeignKey(Article, on_delete=models.DO_NOTHING)
     section_no = models.IntegerField("Section No.")
     title = models.CharField("Section Title", max_length=150)
     content = models.TextField("Section Content")

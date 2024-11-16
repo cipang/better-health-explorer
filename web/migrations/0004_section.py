@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('section_no', models.IntegerField(verbose_name='Section No.')),
                 ('title', models.CharField(max_length=150, verbose_name='Section Title')),
                 ('content', models.TextField(verbose_name='Section Content')),
-                ('article', models.ForeignKey(to='extract.Article')),
+                ('article', models.ForeignKey(to='extract.Article', on_delete=models.DO_NOTHING)),
             ],
             options={
                 'verbose_name_plural': 'Sections',
