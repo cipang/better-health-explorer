@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-IS_SERVER = os.path.exists("/root")
 
 
 # Quick-start development settings - unsuitable for production
@@ -21,7 +20,7 @@ IS_SERVER = os.path.exists("/root")
 SECRET_KEY = 'z-rx_5l*1y+bj0)^6gn=xri49p-#c^wa0na@z7d8)68bg@^h4b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not IS_SERVER
+DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
