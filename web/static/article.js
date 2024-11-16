@@ -7,8 +7,12 @@ var clickedFish = false;
 var articleOpened = 1;
 var historyCount = 0;
 
+function getApiRoot() {
+    return (document.body.dataset.apiRoot || "").replace(/\/$/, "");
+}
+
 function loadContent(article, isStated) {
-    $.get("/content", {"article": article}, function (data, status, xhr) {
+    $.get(getApiRoot() + "/content", {"article": article}, function (data, status, xhr) {
         $("#main").hide().css("opacity", "0").css("margin-left", "-10px");
         $("#pagetitle").html(data.title);
         document.title = data.title;
@@ -83,7 +87,7 @@ function jumpSection(e) {
 }
 
 function catchFish(article) {
-    $.get("/catchfish", {"article": article, "sliders": sliderValues,
+    $.get(getApiRoot() + "/catchfish", {"article": article, "sliders": sliderValues,
             "checkboxes": checkboxValues, "filters": filterValues},
         function (data, status, xhr) {
             pond_showResult(data.result);
@@ -105,7 +109,7 @@ function openArticle(article, isStated) {
     loadContent(currentArticle, isStated);
     catchFish(currentArticle);
     if (!isStated)
-        window.history.pushState(getCurrentState(), document.title, "/article/" + article);
+        window.history.pushState(getCurrentState(), document.title, getApiRoot() + "/article/" + article);
     updateBackButtonHint();
 }
 
@@ -184,7 +188,7 @@ function tooltipRun() {
         pop.find("#popsummary").text("");
         pop.css("left", x + "px").css("top", y + "px").fadeIn("fast");
 
-        $.get("/summary", {"article": hoveredFish}, function (data, status, xhr) {
+        $.get(getApiRoot() + "/summary", {"article": hoveredFish}, function (data, status, xhr) {
             var h1 = pop.find("h1").html(data.title).outerHeight(true);
             var h2 = pop.find("#popsummary").html(data.summary).outerHeight(true);
             pop.css("height", (30 + h1 + h2) + "px");
@@ -306,7 +310,7 @@ function articleLinkClicked(e) {
     var url = $(this).attr("href");
     if (url.indexOf("://") == -1) {
         e.preventDefault();
-        $.get("/find-article", {"url": url}, function (data, status, xhr) {
+        $.get(getApiRoot() + "/find-article", {"url": url}, function (data, status, xhr) {
             openArticle(data.article);
         }).fail(function () {
             alert("Cannot open this article. It is not provided in this demo.");

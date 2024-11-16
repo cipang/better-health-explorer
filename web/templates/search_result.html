@@ -33,7 +33,7 @@
             <a href="{% url 'home' %}">Back to Home</a>
         </div>
         <div id="searchform">
-            <form action="/search" method="get">
+            <form action="{% url 'search' %}" method="get">
                 <div class="row">
                     <div class="col-md-8 col-sm-8 col-xs-8 scell"><input type="text" name="q" id="keyword" autocomplete="off" value="{{ q }}"></div>
                     <div class="col-md-2 col-sm-2 col-xs-4 scell"><button type="submit" class="btn-info btn">Search!</button></div>

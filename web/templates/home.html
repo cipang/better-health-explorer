@@ -38,7 +38,7 @@
         </div>
         <div id="searchform">
             <p>or type a word to find a topic:</p>
-            <form action="/search" method="get">
+            <form action="{% url 'search' %}" method="get">
                 <div class="row">
                     <div class="col-md-10 col-sm-10 col-xs-8 scell"><input type="text" name="q" id="keyword" autocomplete="off"></div>
                     <div class="col-md-2 col-sm-2 col-xs-4 scell"><button type="submit" class="btn-info btn">Search!</button></div>
