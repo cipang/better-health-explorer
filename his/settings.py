@@ -74,11 +74,12 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
+DB_FILENAME = os.path.join(BASE_DIR, "hisdb.sqlite3")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, "hisdb.sqlite3") if not IS_SERVER else \
-            "/app/hisdb.sqlite3",
+        'NAME': DB_FILENAME if os.path.exists(DB_FILENAME) else "/app/hisdb.sqlite3",
     }
 }
 
