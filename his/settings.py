@@ -142,3 +142,5 @@ LOGGING = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+FORCE_SCRIPT_NAME = os.getenv("FORCE_SCRIPT_NAME") or None
