@@ -7,7 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <style>
         html, body { padding: 0; margin: 0; overflow: hidden; }
-        #pond { background-color: lightcyan; }
+        #pond { background-color: lightcyan; overflow-y: scroll; display: flex; flex-wrap: wrap; }
+        #pond > * { transform-origin: left top; }
+        .fish { padding: 1rem; border-radius: .5rem; border: 1px #ccc solid; background-color: lightgoldenrodyellow;
+            flex-grow: 1; width: 20vw; margin: .5rem; cursor: default; }
+        .fish-title { font-weight: bold; }
+        .fish-color-block { width: 1rem; height: 1rem; border: 1px #ccc solid; margin-top: .25rem; }
     </style>
 </head>
 <body>
@@ -28,15 +33,39 @@
         }
 
         function loadData() {
-            let a = rn(1, 20), b = 10, c = 10, d = 10;
+            let a = rn(10, 20), b = 10, c = 10, d = 10;
             const url = `catchfish?article=560&sliders%5B%5D=${a}&sliders%5B%5D=${b}&sliders%5B%5D=${c}&sliders%5B%5D=${d}&checkboxes%5B%5D=true&checkboxes%5B%5D=true&checkboxes%5B%5D=true&checkboxes%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true`;
             fetch(url).then((resp) => {
                 if (resp.ok) {
-                    resp.json().then((x) => console.log(x))
+                    resp.json().then((x) => displayFish(x.result));
                 }
             });
         }
 
+        function displayFish(data) {
+            console.log(data);
+            const pond = d3.select("#pond");
+            const fishes = pond.selectAll("div.fish").data(data, (r) => r.id);
+            const enter = fishes.enter().append("div")
+                .attr("class", "fish")
+                .attr("id", (r) => "fish-" + r.id)  // enter = the div element
+
+            enter.append("div")
+                    .attr("class", "fish-title")
+                    .text((r) => r.title);
+
+            enter.append("div")
+                .attr("class", "fish-description small")
+                .text((r) => `score=${r.score} similarity=${r.similarity}`)
+
+            enter.append("div")
+                .attr("class", "fish-color-block")
+                .style("background-color", (r) => r.color)
+
+            fishes.exit().remove();
+        }
+
+        // UI handling utilities
         function resizeHandler() {
             const pond = document.getElementById("pond");
             const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
