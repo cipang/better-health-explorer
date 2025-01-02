@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <style>
         html, body { padding: 0; margin: 0; overflow: hidden; }
-        #pond { background-color: lightcyan; overflow-y: scroll; display: flex; flex-wrap: wrap; }
+        #pond { background-color: lightcyan; overflow-y: scroll; overflow-x: hidden; display: flex; flex-wrap: wrap; }
         #pond > * { transform-origin: left top; }
         .fish, .ghost { padding: 1rem; border-radius: .5rem; border: 1px #ccc solid;
             width: 20vw; cursor: default; background-color: #ffffe1; }
@@ -86,7 +86,7 @@
                 elem.animate([
                     {transform: `translate(${translateX}px, ${translateY}px)`},
                     {transform: "none"}
-                ], {duration: 1000, easing: "ease-out"})
+                ], {duration: 750, easing: "ease-out"})
             }
             currentClientRects = newRects;
         }
@@ -107,7 +107,7 @@
                 ghostElem.animate([
                     {transform: "none"},
                     {transform: `translate(0px, ${pondBottom}px)`}
-                ], {duration: 1000, easing: "ease-out"}).finished.then(() => ghostElem.remove());
+                ], {duration: 750, easing: "ease-out"}).finished.then(() => ghostElem.remove());
             }
         }
 
