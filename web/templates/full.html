@@ -9,10 +9,12 @@
         html, body { padding: 0; margin: 0; overflow: hidden; }
         #pond { background-color: lightcyan; overflow-y: scroll; display: flex; flex-wrap: wrap; }
         #pond > * { transform-origin: left top; }
-        .fish { padding: 1rem; border-radius: .5rem; border: 1px #ccc solid; background-color: lightgoldenrodyellow;
-            flex-grow: 1; width: 20vw; margin: .5rem; cursor: default; }
+        .fish, .ghost { padding: 1rem; border-radius: .5rem; border: 1px #ccc solid;
+            width: 20vw; cursor: default; background-color: lightgoldenrodyellow; }
+        .fish { flex-grow: 1; margin: .5rem; }
         .fish-title { font-weight: bold; }
         .fish-color-block { width: 1rem; height: 1rem; border: 1px #ccc solid; margin-top: .25rem; }
+        .ghost { position: absolute; }
     </style>
 </head>
 <body>
@@ -90,11 +92,22 @@
         }
 
         function animateFishesOut(selection) {
+            console.log("animate fish out")
+            const pond = document.getElementById("pond");
+            const pondBottom = pond.getBoundingClientRect().bottom;
             for (const elem of selection) {
-                console.log("out", elem);
-                elem.animate([
-                    {transform: `scale(0.01, 0.01)`}
-                ], {duration: 500, easing: "ease-out"}).finished.then(() => { elem.remove(); })
+                const rect = elem.getBoundingClientRect();
+                const ghostElem = document.createElement("div");
+                ghostElem.className = "ghost";
+                ghostElem.style.left = `${rect.x}px`;
+                ghostElem.style.top = `${rect.y}px`;
+                ghostElem.style.width = `${rect.width}px`;
+                ghostElem.style.height = `${rect.height}px`;
+                pond.appendChild(ghostElem);
+                ghostElem.animate([
+                    {transform: "none"},
+                    {transform: `translate(0px, ${pondBottom}px)`}
+                ], {duration: 1000, easing: "ease-out"}).finished.then(() => ghostElem.remove());
             }
         }
 
@@ -117,7 +130,9 @@
                         .attr("class", "fish-color-block")
                         .style("background-color", (r) => r.color);
                     return div;
-                }
+                },
+                update => update,
+                exit => exit.call(animateFishesOut).remove()
             )
             .call(animateFishesIn);
         }
