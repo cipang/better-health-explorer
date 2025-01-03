@@ -19,9 +19,10 @@
 <body>
     <header class="container my-3">
         <h1>Exploratory Engine Full Screen Test</h1>
-        <button class="btn btn-sm btn-primary" id="load-button">Load Data</button>
+        <button class="btn btn-sm btn-primary" id="random-button">Random</button>
         <button class="btn btn-sm btn-danger" id="delete-button">Delete No. 2</button>
         <button class="btn btn-sm btn-secondary" id="shuffle-button">Shuffle</button>
+        <input id="slider" type="range" class="form-range pt-3" min="1" max="20" step="1" value="10" style="width: 15rem;">
     </header>
 
     <div class="container p-3" id="pond"></div>
@@ -40,7 +41,7 @@
         }
 
         function loadData() {
-            let a = rn(18, 20), b = 10, c = 10, d = 10;
+            let a = document.getElementById("slider").value, b = 10, c = 10, d = 10;
             const url = `catchfish?article=560&sliders%5B%5D=${a}&sliders%5B%5D=${b}&sliders%5B%5D=${c}&sliders%5B%5D=${d}&checkboxes%5B%5D=true&checkboxes%5B%5D=true&checkboxes%5B%5D=true&checkboxes%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true&filters%5B%5D=true`;
             fetch(url).then((resp) => {
                 if (resp.ok) {
@@ -146,7 +147,11 @@
             resizeHandler();
             loadData();
         });
-        document.getElementById("load-button").addEventListener("click", loadData);
+        document.getElementById("slider").addEventListener("input", loadData);
+        document.getElementById("random-button").addEventListener("click", () => {
+            document.getElementById("slider").value = rn(18, 20);
+            loadData();
+        });
         document.getElementById("shuffle-button").addEventListener("click", shuffleData);
         document.getElementById("delete-button").addEventListener("click", removeData);
     </script>
