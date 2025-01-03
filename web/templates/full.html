@@ -30,6 +30,7 @@
     <script type="module">
         import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
+        const animateDuration = 750;
         const lorem = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
         let currentClientRects = new Map();
 
@@ -86,13 +87,12 @@
                 elem.animate([
                     {transform: `translate(${translateX}px, ${translateY}px)`},
                     {transform: "none"}
-                ], {duration: 750, easing: "ease-out"})
+                ], {duration: animateDuration, easing: "ease-out"})
             }
             currentClientRects = newRects;
         }
 
         function animateFishesOut(selection) {
-            console.log("animate fish out")
             const pond = document.getElementById("pond");
             const pondBottom = pond.getBoundingClientRect().bottom;
             for (const elem of selection) {
@@ -105,9 +105,8 @@
                 ghostElem.style.height = `${rect.height}px`;
                 pond.appendChild(ghostElem);
                 ghostElem.animate([
-                    {transform: "none"},
                     {transform: `translate(0px, ${pondBottom}px)`}
-                ], {duration: 750, easing: "ease-out"}).finished.then(() => ghostElem.remove());
+                ], {duration: animateDuration, easing: "ease-out"}).finished.then(() => ghostElem.remove());
             }
         }
 
