@@ -8,7 +8,6 @@
     <style>
         html, body { padding: 0; margin: 0; overflow: hidden; }
         #pond { background-color: lightcyan; overflow-y: scroll; overflow-x: hidden; display: flex; flex-wrap: wrap; }
-        #pond > * { transform-origin: left top; }
         .fish, .ghost { padding: 1rem; border-radius: .5rem; border: 1px #ccc solid;
             width: 20vw; cursor: default; background-color: #ffffe1; }
         .fish { flex-grow: 1; margin: .5rem; }
@@ -105,7 +104,7 @@
                 ghostElem.style.height = `${rect.height}px`;
                 pond.appendChild(ghostElem);
                 ghostElem.animate([
-                    {transform: `translate(0px, ${pondBottom}px)`}
+                    {transform: `translate(0px, ${pondBottom + pond.scrollTop}px) scale(0.5)`}
                 ], {duration: animateDuration, easing: "ease-out"}).finished.then(() => ghostElem.remove());
             }
         }
