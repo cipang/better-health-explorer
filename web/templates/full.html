@@ -18,7 +18,8 @@
         .ghost { position: absolute; z-index: 100; opacity: .9; }
     </style>
 </head>
-<body>
+{% load static %}
+<body data-images='["{% static 'images/bg1.jpg' %}", "{% static 'images/bg2.jpg' %}", "{% static 'images/bg3.jpg' %}"]'>
     <header class="container my-3">
         <h1>Exploratory Engine Full Screen Test</h1>
         <button class="btn btn-sm btn-primary" id="random-button">Random</button>
@@ -34,6 +35,8 @@
 
         const animateDuration = 750;
         const lorem = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        const images = JSON.parse(document.body.dataset.images || "[]")
+        console.log(images)
         let currentClientRects = new Map();
 
         function rn(min, max) {
@@ -121,6 +124,10 @@
                     const fish = enter.append("div")
                         .attr("class", "fish card")
                         .attr("id", (r) => "fish-" + r.id)
+
+                    fish.append("img")
+                        .attr("class", "card-img-top")
+                        .attr("src", (r) => images[r.id % 3])
 
                     const div = fish.append("div")
                         .attr("class", "card-body")
