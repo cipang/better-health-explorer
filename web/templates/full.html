@@ -99,18 +99,16 @@
             const pondRect = pond.getBoundingClientRect();
             for (const elem of selection) {
                 const rect = elem.getBoundingClientRect();
-                if (rect.bottom >= pondRect.y) {
-                    const ghostElem = document.createElement("div");
-                    ghostElem.className = "ghost";
-                    ghostElem.style.left = `${rect.x - pondRect.x}px`;
-                    ghostElem.style.top = `${rect.y - pondRect.y + pond.scrollTop}px`;
-                    ghostElem.style.width = `${rect.width}px`;
-                    ghostElem.style.height = `${rect.height}px`;
-                    pond.appendChild(ghostElem);
-                    ghostElem.animate([
-                        {transform: `translate(0px, ${pondRect.bottom + pond.scrollTop}px)`}
-                    ], {duration: animateDuration, easing: "ease-out"}).finished.then(() => ghostElem.remove());
-                }
+                const ghostElem = document.createElement("div");
+                ghostElem.className = "ghost";
+                ghostElem.style.left = `${rect.x - pondRect.x}px`;
+                ghostElem.style.top = `${rect.y - pondRect.y + pond.scrollTop}px`;
+                ghostElem.style.width = `${rect.width}px`;
+                ghostElem.style.height = `${rect.height}px`;
+                pond.appendChild(ghostElem);
+                ghostElem.animate([
+                    {transform: `translate(0px, ${pondRect.bottom + pond.scrollTop}px)`}
+                ], {duration: animateDuration, easing: "ease-out"}).finished.then(() => ghostElem.remove());
             }
         }
 
@@ -153,7 +151,7 @@
         });
         document.getElementById("slider").addEventListener("input", loadData);
         document.getElementById("random-button").addEventListener("click", () => {
-            document.getElementById("slider").value = rn(18, 20);
+            document.getElementById("slider").value = rn(1, 20);
             loadData();
         });
         document.getElementById("shuffle-button").addEventListener("click", shuffleData);
