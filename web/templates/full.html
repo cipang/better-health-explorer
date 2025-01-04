@@ -10,11 +10,11 @@
         #pond { background-color: lightcyan; overflow-y: scroll; overflow-x: hidden;
             display: flex; flex-wrap: wrap; position: relative; }
         #pond > * { transform-origin: left top; }
-        .fish, .ghost { padding: 1rem; border-radius: .5rem; border: 1px #ccc solid;
+        .fish, .ghost { border-radius: .5rem; border: 1px #ccc solid;
             width: 20vw; cursor: default; background-color: #ffffe1; }
         .fish { flex-grow: 1; margin: .5rem; z-index: 10; }
-        .fish-title { font-weight: bold; }
-        .fish-color-block { width: 1rem; height: 1rem; border: 1px #ccc solid; margin-top: .25rem; }
+        .fish .card-title { font-weight: bold; }
+        .fish .color-block { width: 1rem; height: 1rem; border: 1px #ccc solid; margin-top: .25rem; }
         .ghost { position: absolute; z-index: 100; opacity: .9; }
     </style>
 </head>
@@ -118,19 +118,23 @@
 
             fishes.join(
                 enter => {
-                    const div = enter.append("div")
-                        .attr("class", "fish")
+                    const fish = enter.append("div")
+                        .attr("class", "fish card")
                         .attr("id", (r) => "fish-" + r.id)
+
+                    const div = fish.append("div")
+                        .attr("class", "card-body")
                     div.append("div")
-                        .attr("class", "fish-title")
+                        .attr("class", "card-title")
                         .text((r) => r.title);
                     div.append("div")
-                        .attr("class", "fish-description small")
+                        .attr("class", "small")
                         .text((r) => lorem.substr(0, rn(50, 120)));
                     div.append("div")
-                        .attr("class", "fish-color-block")
+                        .attr("class", "color-block")
                         .style("background-color", (r) => r.color);
-                    return div;
+
+                    return fish;
                 },
                 update => update,
                 exit => exit.call(animateFishesOut).remove()
