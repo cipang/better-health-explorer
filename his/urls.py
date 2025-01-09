@@ -18,5 +18,5 @@ urlpatterns = [
     re_path(r'^images/(?P<image>.+)$', views.image_redirect),
     re_path(r'^find-article$', views.find_article),
     re_path(r'^search$', views.search, name="search"),
-    path("full.html", views.full),
+    path("new.html", views.new_ui_view),
 ]

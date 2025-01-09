@@ -343,5 +343,5 @@ def _check_login(request):
     #return request.get_signed_cookie("hifish_login", default=None) == "OK"
 
 
-def full(request):
-    return render(request, "full.html")
+def new_ui_view(request):
+    return render(request, "new.html")
