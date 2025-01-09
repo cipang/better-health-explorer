@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import re_path, path
 from django.contrib import admin
 from web import views
 
@@ -18,4 +18,5 @@ urlpatterns = [
     re_path(r'^images/(?P<image>.+)$', views.image_redirect),
     re_path(r'^find-article$', views.find_article),
     re_path(r'^search$', views.search, name="search"),
+    path("new.html", views.new_ui_view),
 ]
